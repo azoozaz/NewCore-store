@@ -1,0 +1,150 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>منتجات XFaction</title>
+  <style>
+    body {
+      background-color: #0e0e0e;
+      color: white;
+      font-family: sans-serif;
+      margin: 0;
+    }
+    header {
+      background: #111;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header .nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 20px;
+      font-weight: bold;
+    }
+    .grid {
+      display: flex;
+      flex-wrap: wrap;
+      padding: 30px;
+      justify-content: center;
+      gap: 25px;
+    }
+    .card {
+      background: #1a1a1a;
+      border-radius: 10px;
+      width: 300px;
+      box-shadow: 0 0 10px rgba(0,255,213,0.1);
+      overflow: hidden;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: scale(1.03);
+    }
+    .card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+    .card-body {
+      padding: 15px;
+    }
+    .card-body h3 {
+      margin: 0 0 10px;
+      font-size: 17px;
+      color: #00ffd5;
+    }
+    .card-body p {
+      margin: 0 0 10px;
+      font-size: 14px;
+      color: #ccc;
+    }
+    .price {
+      font-size: 16px;
+      color: #ff4444;
+      font-weight: bold;
+    }
+    .cart-btn {
+      background: #00ffd5;
+      border: none;
+      color: black;
+      font-weight: bold;
+      width: 100%;
+      padding: 10px;
+      cursor: pointer;
+      border-radius: 0 0 10px 10px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <a href="index.html">الرئيسية</a>
+      <a href="products.html">المنتجات</a>
+      <a href="cart.html">السلة</a>
+    </div>
+    <div class="logo">XFaction 🛒</div>
+  </header>
+
+  <section class="grid" id="productGrid">جاري التحميل...</section>
+
+  <script>
+    const sampleProducts = [
+      {
+        name: "سماعة XF",
+        price: 120,
+        image: "https://via.placeholder.com/250x150.png?text=XF+Earbuds"
+      },
+      {
+        name: "شاحن سريع",
+        price: 80,
+        image: "https://via.placeholder.com/250x150.png?text=Fast+Charger"
+      },
+      {
+        name: "كيبورد ميكانيكي",
+        price: 220,
+        image: "https://via.placeholder.com/250x150.png?text=Keyboard"
+      },
+      {
+        name: "ماوس XF Gamer",
+        price: 150,
+        image: "https://via.placeholder.com/250x150.png?text=XF+Mouse"
+      },
+      {
+        name: "شاشة 24 بوصة",
+        price: 580,
+        image: "https://via.placeholder.com/250x150.png?text=24%22+Monitor"
+      }
+    ];
+
+    function loadProducts() {
+      const container = document.getElementById('productGrid');
+      container.innerHTML = "";
+      sampleProducts.forEach(p => {
+        const div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = `
+          <img src="${p.image}" alt="${p.name}">
+          <div class="card-body">
+            <h3>${p.name}</h3>
+            <p>منتج رائع مقدم من XFaction</p>
+            <div class="price">${p.price} ريال</div>
+          </div>
+          <button class="cart-btn" onclick="addToCart('${p.name}', ${p.price})">🛒 أضف للسلة</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function addToCart(name, price) {
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      cart.push({ name, price });
+      localStorage.setItem("cart", JSON.stringify(cart));
+      alert(`${name} تمت إضافته للسلة`);
+    }
+
+    loadProducts();
+  </script>
+</body>
+</html>

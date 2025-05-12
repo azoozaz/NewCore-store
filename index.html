@@ -1,0 +1,89 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>XFaction | الرئيسية</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .admin-popup {
+      display: none;
+      position: absolute;
+      top: 60px;
+      left: 20px;
+      background: #111;
+      padding: 20px;
+      border-radius: 12px;
+      z-index: 999;
+      width: 250px;
+      box-shadow: 0 0 25px rgba(0,255,213,0.3);
+      backdrop-filter: blur(4px);
+      text-align: center;
+    }
+    .admin-popup input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border: none;
+      background: #eee;
+      color: #000;
+      border-radius: 6px;
+      font-size: 14px;
+      text-align: center;
+    }
+    .admin-popup button {
+      background: #00ffd5;
+      color: #000;
+      border: none;
+      padding: 10px;
+      width: 100%;
+      cursor: pointer;
+      font-weight: bold;
+      border-radius: 6px;
+      transition: 0.2s;
+    }
+    .admin-popup button:hover {
+      background: #00d2b1;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="logo">🛒 XFaction</div>
+    <nav class="main-nav">
+      <a href="index.html">الرئيسية</a>
+      <a href="products.html">المنتجات</a>
+      <a href="cart.html">السلة</a>
+      <div style="position: relative;">
+        <a href="#" onclick="toggleAdminPopup()">لوحة التحكم</a>
+        <div class="admin-popup" id="adminPopup">
+          <input type="password" id="adminPopupCode" placeholder="رمز الدخول (123123)" required>
+          <button onclick="submitAdminPopup()">دخول</button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main style="text-align:center;padding:80px 0;">
+    <h1>مرحبًا بك في XFaction</h1>
+    <p>شركة إلكترونية تقدم لك منتجات مميزة بجودة عالية وسهولة طلب.</p>
+  </main>
+
+  <script>
+    function toggleAdminPopup() {
+      const popup = document.getElementById('adminPopup');
+      popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function submitAdminPopup() {
+      const code = document.getElementById('adminPopupCode').value.trim();
+      if (code === '123123') {
+        localStorage.setItem('adminAccess', 'true');
+        window.location.href = 'admin.html';
+      } else {
+        alert('رمز خاطئ');
+      }
+    }
+  </script>
+</body>
+</html>

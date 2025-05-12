@@ -1,0 +1,48 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>تسجيل دخول الإدارة - XFaction</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="logo">🛒 XFaction</div>
+    <nav class="main-nav">
+      <a href="index.html">الرئيسية</a>
+      <a href="products.html">المنتجات</a>
+      <a href="cart.html">السلة</a>
+      <a href="admin-gate.html" class="active">لوحة التحكم</a>
+    </nav>
+  </header>
+
+  <main class="register-box">
+    <h2>دخول المشرف</h2>
+    <input type="email" id="adminEmail" placeholder="الإيميل الإداري">
+    <input type="password" id="adminCode" placeholder="كود الدخول">
+    <button onclick="verifyAdmin()">دخول</button>
+  </main>
+
+  <script>
+    async function verifyAdmin() {
+      const email = document.getElementById('adminEmail').value.trim();
+      const code = document.getElementById('adminCode').value.trim();
+
+      const res = await fetch('http://localhost:3000/api/check-admin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, code })
+      });
+
+      const data = await res.json();
+      if (data.access) {
+        localStorage.setItem('adminAccess', 'true');
+        window.location.href = 'admin.html';
+      } else {
+        alert('بيانات غير صحيحة');
+      }
+    }
+  </script>
+</body>
+</html>

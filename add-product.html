@@ -1,0 +1,81 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>إضافة منتج جديد - XFaction</title>
+  <style>
+    body {
+      background-color: #111;
+      color: white;
+      font-family: sans-serif;
+      padding: 40px;
+    }
+    h2 {
+      color: #00ffd5;
+    }
+    form {
+      max-width: 400px;
+      margin: auto;
+      background: #1a1a1a;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,255,213,0.1);
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: none;
+      border-radius: 8px;
+      background: #eee;
+      color: #000;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      background: #00ffd5;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h2>🛒 إضافة منتج جديد</h2>
+  <form id="productForm">
+    <input type="text" id="name" placeholder="اسم المنتج" required>
+    <input type="number" id="price" placeholder="السعر" required>
+    <input type="text" id="image" placeholder="رابط صورة المنتج (اختياري)">
+    <button type="submit">إضافة</button>
+  </form>
+
+  <script>
+    document.getElementById('productForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('name').value;
+      const price = parseFloat(document.getElementById('price').value);
+      const image = document.getElementById('image').value || 'https://via.placeholder.com/250x150?text=Product';
+
+      const newProduct = { name, price, image };
+      try {
+        const res = await fetch('http://localhost:3000/api/products', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newProduct)
+        });
+        if (res.ok) {
+          alert("تمت إضافة المنتج بنجاح");
+          window.location.href = "products.html";
+        } else {
+          alert("فشل في الإضافة");
+        }
+      } catch {
+        alert("خطأ في الاتصال بالسيرفر");
+      }
+    });
+  </script>
+</body>
+</html>
