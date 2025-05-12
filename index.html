@@ -701,6 +701,7 @@
   </footer>
 
   <script>
+    
     // تحسين مؤثرات النجوم للتقييم
     const stars = document.querySelectorAll('#starRating span');
     stars.forEach((star, index) => {
@@ -831,6 +832,7 @@
       const re = /^[0-9]{9,15}$/;
       return re.test(phone.replace(/\s+/g, '').replace(/[\+\-]/g, ''));
     }
+
 
     function logout() {
       localStorage.removeItem("visitor");
