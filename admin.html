@@ -1,52 +1,339 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>لوحة تحكم الزوار</title>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
   <style>
-    body {
-      background: #0e0e0e;
-      color: white;
-      font-family: sans-serif;
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+    
+    :root {
+      --bg-primary: #0c1121;
+      --bg-card: #141c36;
+      --accent-primary: #00e5ff;
+      --accent-secondary: #734dff;
+      --text-primary: #ffffff;
+      --text-secondary: #a0aed6;
+      --delete-btn: #ff3a6e;
+      --delete-hover: #ff1a56;
+      --card-shadow: 0 4px 20px rgba(0, 229, 255, 0.1);
+    }
+    
+    * {
       margin: 0;
-      padding: 30px;
-    }
-    h1 {
-      text-align: center;
-      color: #00ffd5;
-    }
-    ul {
-      list-style: none;
       padding: 0;
-      max-width: 700px;
-      margin: auto;
+      box-sizing: border-box;
     }
-    li {
-      background: #1c1c1c;
-      margin-bottom: 10px;
-      padding: 15px;
-      border-radius: 6px;
+    
+    body {
+      background: var(--bg-primary);
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(115, 77, 255, 0.05) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(0, 229, 255, 0.07) 0%, transparent 30%);
+      color: var(--text-primary);
+      font-family: 'Cairo', sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 3rem;
       position: relative;
     }
-    button {
+    
+    .header h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      position: relative;
+      display: inline-block;
+      padding-bottom: 0.75rem;
+    }
+    
+    .header h1::after {
+      content: '';
       position: absolute;
-      left: 10px;
-      top: 10px;
-      background: #ff4444;
+      bottom: 0;
+      left: 25%;
+      width: 50%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+      border-radius: 3px;
+    }
+    
+    .header p {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    
+    .stat-card {
+      background: var(--bg-card);
+      border-radius: 12px;
+      padding: 1.25rem;
+      min-width: 180px;
+      flex: 1;
+      text-align: center;
+      box-shadow: var(--card-shadow);
+      border: 1px solid rgba(0, 229, 255, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 25px rgba(0, 229, 255, 0.15);
+    }
+    
+    .stat-card i {
+      font-size: 1.8rem;
+      background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 0.5rem;
+    }
+    
+    .stat-card .stat-value {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+    
+    .stat-card .stat-label {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+    }
+    
+    .visitors-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .visitor-card {
+      background: var(--bg-card);
+      margin-bottom: 1rem;
+      padding: 1.5rem;
+      border-radius: 12px;
+      position: relative;
+      box-shadow: var(--card-shadow);
+      border: 1px solid rgba(0, 229, 255, 0.1);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    .visitor-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 25px rgba(0, 229, 255, 0.15);
+    }
+    
+    .visitor-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+    
+    .visitor-avatar {
+      width: 45px;
+      height: 45px;
+      background: linear-gradient(45deg, var(--accent-primary), var(--accent-secondary));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 1rem;
+      font-size: 1.2rem;
+      color: white;
+    }
+    
+    .visitor-name {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+    
+    .visitor-time {
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      margin-top: 0.25rem;
+    }
+    
+    .visitor-details {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding-right: 0.5rem;
+    }
+    
+    .visitor-detail {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.5rem;
+      background: rgba(20, 28, 54, 0.7);
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      min-width: 180px;
+    }
+    
+    .visitor-detail i {
+      margin-left: 0.5rem;
+      color: var(--accent-primary);
+      font-size: 0.9rem;
+    }
+    
+    .delete-btn {
+      position: absolute;
+      left: 1rem;
+      top: 1rem;
+      background: var(--delete-btn);
       color: white;
       border: none;
-      padding: 6px 10px;
-      border-radius: 5px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 3px 10px rgba(255, 58, 110, 0.3);
+    }
+    
+    .delete-btn:hover {
+      background: var(--delete-hover);
+      transform: scale(1.05);
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+    }
+    
+    .loading i {
+      margin-left: 0.5rem;
+      animation: spin 1s linear infinite;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-secondary);
+    }
+    
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.7;
+    }
+    
+    .empty-state p {
+      font-size: 1.1rem;
+    }
+    
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(160, 174, 214, 0.1);
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        padding: 1.5rem 1rem;
+      }
+      
+      .header h1 {
+        font-size: 1.8rem;
+      }
+      
+      .stat-card {
+        min-width: 140px;
+      }
+      
+      .visitor-details {
+        flex-direction: column;
+      }
+      
+      .visitor-detail {
+        min-width: auto;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>👥 قائمة الزوار (Firestore)</h1>
-  <ul id="visitorList">جاري التحميل...</ul>
+  <div class="container">
+    <div class="header animate__animated animate__fadeIn">
+      <h1><i class="fas fa-users-viewfinder"></i> لوحة تحكم الزوار</h1>
+      <p>إدارة بيانات الزوار والمتابعة بسهولة</p>
+    </div>
+    
+    <div class="stats animate__animated animate__fadeInUp">
+      <div class="stat-card">
+        <i class="fas fa-users"></i>
+        <div class="stat-value" id="totalVisitors">-</div>
+        <div class="stat-label">إجمالي الزوار</div>
+      </div>
+      <div class="stat-card">
+        <i class="fas fa-calendar-day"></i>
+        <div class="stat-value" id="todayVisitors">-</div>
+        <div class="stat-label">زوار اليوم</div>
+      </div>
+      <div class="stat-card">
+        <i class="fas fa-clock"></i>
+        <div class="stat-value" id="lastVisit">-</div>
+        <div class="stat-label">آخر زيارة</div>
+      </div>
+    </div>
+    
+    <ul id="visitorList" class="visitors-list animate__animated animate__fadeIn">
+      <div class="loading">
+        <i class="fas fa-circle-notch"></i> جاري تحميل البيانات...
+      </div>
+    </ul>
+    
+    <div class="footer">
+      <p>© 2025 لوحة تحكم الزوار | تم التطوير بواسطة فريق الشركة</p>
+    </div>
+  </div>
 
   <script>
     const firebaseConfig = {
@@ -58,29 +345,176 @@
     const db = firebase.firestore();
 
     const list = document.getElementById("visitorList");
+    const totalVisitorsElement = document.getElementById("totalVisitors");
+    const todayVisitorsElement = document.getElementById("todayVisitors");
+    const lastVisitElement = document.getElementById("lastVisit");
+
+    function getInitials(name) {
+      return name.split(' ').map(part => part.charAt(0)).join('').toUpperCase();
+    }
+
+    function formatTime(timeString) {
+      if (!timeString) return "غير محدد";
+      
+      // تحويل التاريخ إذا كان بتنسيق Timestamp أو Date
+      let date;
+      if (timeString.toDate) { // في حالة كان Firestore Timestamp
+        date = timeString.toDate();
+      } else if (timeString instanceof Date) {
+        date = timeString;
+      } else {
+        try {
+          date = new Date(timeString);
+        } catch (e) {
+          return timeString; // إرجاع النص الأصلي إذا فشل التحويل
+        }
+      }
+      
+      // التحقق من أن التاريخ صالح
+      if (isNaN(date.getTime())) return timeString;
+      
+      // تنسيق التاريخ والوقت بالعربي
+      const options = { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric',
+        hour: '2-digit', 
+        minute: '2-digit'
+      };
+      
+      return date.toLocaleDateString('ar-SA', options);
+    }
 
     function loadVisitors() {
-      list.innerHTML = "";
+      list.innerHTML = '<div class="loading"><i class="fas fa-circle-notch"></i> جاري تحميل البيانات...</div>';
+      
       db.collection("visitors").get().then(snapshot => {
         if (snapshot.empty) {
-          list.innerHTML = "<li>لا يوجد زوار بعد</li>";
+          list.innerHTML = `
+            <div class="empty-state">
+              <i class="fas fa-user-slash"></i>
+              <p>لا يوجد زوار حتى الآن</p>
+            </div>`;
+          updateStats([], null);
           return;
         }
+        
+        // تجميع بيانات الزوار
+        const visitors = [];
         snapshot.forEach(doc => {
-          const v = doc.data();
-          const li = document.createElement("li");
-          li.innerHTML = `👤 <strong>${v.name}</strong><br>📞 ${v.phone}<br>📧 ${v.email}<br>🕒 ${v.time}
-            <button onclick="deleteVisitor('${doc.id}')">✖ حذف</button>`;
+          const data = doc.data();
+          visitors.push({
+            id: doc.id,
+            ...data
+          });
+        });
+        
+        // ترتيب البيانات حسب الوقت (الأحدث أولاً)
+        visitors.sort((a, b) => {
+          const timeA = a.time ? new Date(a.time) : new Date(0);
+          const timeB = b.time ? new Date(b.time) : new Date(0);
+          return timeB - timeA;
+        });
+        
+        // عرض البيانات
+        list.innerHTML = '';
+        visitors.forEach((visitor, index) => {
+          const li = document.createElement('li');
+          li.className = 'visitor-card animate__animated animate__fadeIn';
+          li.style.animationDelay = `${index * 0.1}s`;
+          
+          const initials = getInitials(visitor.name || 'زائر');
+          const formattedTime = formatTime(visitor.time);
+          
+          li.innerHTML = `
+            <div class="visitor-header">
+              <div class="visitor-avatar">${initials}</div>
+              <div>
+                <div class="visitor-name">${visitor.name || 'زائر'}</div>
+                <div class="visitor-time"><i class="far fa-clock"></i> ${formattedTime}</div>
+              </div>
+            </div>
+            <div class="visitor-details">
+              <div class="visitor-detail">
+                <i class="fas fa-phone"></i>
+                <span>${visitor.phone || 'غير متوفر'}</span>
+              </div>
+              <div class="visitor-detail">
+                <i class="fas fa-envelope"></i>
+                <span>${visitor.email || 'غير متوفر'}</span>
+              </div>
+            </div>
+            <button class="delete-btn" onclick="deleteVisitor('${visitor.id}')">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          `;
           list.appendChild(li);
         });
+        
+        // تحديث الإحصائيات
+        updateStats(visitors, visitors[0]);
+      }).catch(error => {
+        console.error("Error loading visitors:", error);
+        list.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-exclamation-triangle"></i>
+            <p>حدث خطأ في تحميل البيانات</p>
+          </div>`;
       });
+    }
+
+    function updateStats(visitors, lastVisitor) {
+      // إجمالي الزوار
+      totalVisitorsElement.textContent = visitors.length;
+      
+      // زوار اليوم
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      const todayVisitors = visitors.filter(visitor => {
+        if (!visitor.time) return false;
+        const visitTime = visitor.time instanceof Date ? visitor.time : new Date(visitor.time);
+        return visitTime >= today;
+      });
+      
+      todayVisitorsElement.textContent = todayVisitors.length;
+      
+      // آخر زيارة
+      if (lastVisitor && lastVisitor.time) {
+        const now = new Date();
+        const visitTime = lastVisitor.time instanceof Date ? lastVisitor.time : new Date(lastVisitor.time);
+        const diffInMinutes = Math.floor((now - visitTime) / (1000 * 60));
+        
+        if (diffInMinutes < 60) {
+          lastVisitElement.textContent = `${diffInMinutes} دقيقة`;
+        } else if (diffInMinutes < 1440) {
+          lastVisitElement.textContent = `${Math.floor(diffInMinutes / 60)} ساعة`;
+        } else {
+          lastVisitElement.textContent = `${Math.floor(diffInMinutes / 1440)} يوم`;
+        }
+      } else {
+        lastVisitElement.textContent = "-";
+      }
     }
 
     function deleteVisitor(id) {
       if (!confirm("هل أنت متأكد من حذف هذا الزائر؟")) return;
-      db.collection("visitors").doc(id).delete().then(loadVisitors);
+      
+      const card = document.querySelector(`[onclick="deleteVisitor('${id}')"]`).closest('.visitor-card');
+      card.classList.add('animate__animated', 'animate__fadeOutRight');
+      
+      setTimeout(() => {
+        db.collection("visitors").doc(id).delete().then(() => {
+          loadVisitors();
+        }).catch(error => {
+          console.error("Error removing visitor:", error);
+          card.classList.remove('animate__animated', 'animate__fadeOutRight');
+          alert("حدث خطأ أثناء الحذف، يرجى المحاولة مرة أخرى.");
+        });
+      }, 500);
     }
 
+    // تحميل البيانات عند فتح الصفحة
     loadVisitors();
   </script>
 </body>
