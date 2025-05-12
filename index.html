@@ -773,41 +773,45 @@
       showRatings();
     }
 
-    function updateVisitorStats() {
+function updateVisitorStats() {
   const visitors = JSON.parse(localStorage.getItem("visitors") || "[]");
-  const now = new Date();
+  const now = Date.now();
 
   document.getElementById("totalVisitors").innerText = visitors.length;
 
   let todayCount = 0;
-  let lastVisit = null;
+  let lastVisit = 0;
 
   visitors.forEach(v => {
-    const time = new Date(v.time);
-    if (time.toDateString() === now.toDateString()) {
+    const visitTime = typeof v.time === 'number' ? v.time : Date.parse(v.time);
+    const visitDate = new Date(visitTime);
+
+    // مقارنة التاريخ بدون الوقت
+    const today = new Date();
+    if (
+      visitDate.getFullYear() === today.getFullYear() &&
+      visitDate.getMonth() === today.getMonth() &&
+      visitDate.getDate() === today.getDate()
+    ) {
       todayCount++;
     }
-    if (!lastVisit || time > new Date(lastVisit)) {
-      lastVisit = v.time;
-    }
+
+    if (visitTime > lastVisit) lastVisit = visitTime;
   });
 
   document.getElementById("todayVisitors").innerText = todayCount;
 
-if (lastVisit) {
-  const lastDate = new Date(lastVisit);
-  const diffMin = Math.floor((Date.now() - lastDate.getTime()) / 60000);
+  if (lastVisit) {
+    const diffMin = Math.floor((now - lastVisit) / 60000);
+    let result = "-";
+    if (diffMin < 60) result = `${diffMin} دقيقة`;
+    else if (diffMin < 1440) result = `${Math.floor(diffMin / 60)} ساعة`;
+    else result = `${Math.floor(diffMin / 1440)} يوم`;
 
-  let result = "-";
-  if (diffMin < 60) result = `${diffMin} دقيقة`;
-  else if (diffMin < 1440) result = `${Math.floor(diffMin / 60)} ساعة`;
-  else result = `${Math.floor(diffMin / 1440)} يوم`;
-
-  document.getElementById("lastVisit").innerText = result;
-} else {
-  document.getElementById("lastVisit").innerText = "-";
-}
-
+    document.getElementById("lastVisit").innerText = result;
+  } else {
+    document.getElementById("lastVisit").innerText = "-";
+  }
 }
 
 updateVisitorStats();
@@ -870,7 +874,7 @@ updateVisitorStats();
         name, 
         email, 
         phone, 
-       time: new Date().toISOString(),
+   time: Date.now(),
         id: Date.now()
       };
       
