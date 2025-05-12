@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>إتمام الطلب - XFaction</title>
+  <style>
+    body {
+      background: #0e0e0e;
+      color: white;
+      font-family: sans-serif;
+      padding: 30px;
+    }
+    h2 {
+      color: #00ffd5;
+    }
+    .form {
+      background: #1a1a1a;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 500px;
+      margin: auto;
+    }
+    input, textarea, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1em;
+    }
+    button {
+      background: #00ffd5;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h2>إتمام الطلب</h2>
+  <div class="form">
+    <input type="text" id="name" placeholder="اسمك الكامل" />
+    <input type="tel" id="phone" placeholder="رقم الجوال" />
+    <textarea id="address" placeholder="العنوان الكامل للتوصيل"></textarea>
+<input type="text" id="keymaster" placeholder="اسمك في keymaster (إجباري)" />
+    <button onclick="submitOrder()">📦 إرسال الطلب</button>
+  </div>
+
+  <script>
+    document.getElementById("name").value = JSON.parse(localStorage.getItem("visitor") || "{}").name || "";
+
+    function submitOrder() {
+      const name = document.getElementById("name").value;
+      const phone = document.getElementById("phone").value;
+      const address = document.getElementById("address").value;
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+      const keymaster = document.getElementById("keymaster").value;
+      if (!name || !phone || !address || !keymaster || cart.length === 0) {
+        alert("تأكد من تعبئة جميع الحقول ووجود منتجات في السلة");
+        return;
+      }
+
+      const message = {
+        content: "**طلب جديد من المتجر**",
+        embeds: [{
+          title: "🛒 تفاصيل الطلب",
+          color: 5814783,
+          fields: [
+            { name: "الاسم", value: name, inline: true },
+            { name: "رقم الجوال", value: phone, inline: true },
+            { name: "العنوان", value: address },
+            { name: "Keymaster", value: keymaster, inline: true },
+            { name: "المنتجات", value: cart.map(p => `• ${p.name} - ${p.price} ريال`).join("\n") },
+            { name: "المجموع الكلي", value: cart.reduce((t, p) => t + p.price, 0) + " ريال" }
+          ]
+        }]
+      };
+
+      fetch("https://discord.com/api/webhooks/1219419090620518421/zRjyYLtT_JejbPm0OhZQAEkWLGLYcQahtAWHGNZ8JhUDy8mBSLGnwxmkRtffwBNY5QOR", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(message)
+      }).then(res => {
+        alert("✅ تم إرسال الطلب بنجاح");
+        
+    const orders = JSON.parse(localStorage.getItem("orders") || "[]");
+    orders.push({ name, phone, address, keymaster, items: cart });
+    localStorage.setItem("orders", JSON.stringify(orders));
+    localStorage.removeItem("cart");
+    
+        window.location.href = "index.html";
+      }).catch(err => alert("حدث خطأ، حاول مجددًا"));
+    }
+  </script>
+</body>
+</html>

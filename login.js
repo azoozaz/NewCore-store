@@ -1,26 +1,41 @@
 
-async function login() {
-  const username = document.getElementById('username').value.trim();
-  const fullname = document.getElementById('fullname').value.trim();
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('loginForm');
+  const overlay = document.getElementById('overlay');
 
-  if (!username || !fullname) {
-    alert('الرجاء تعبئة جميع الحقول');
-    return;
+  if (localStorage.getItem('logout') === 'true') {
+    document.getElementById('logoutMessage').style.display = 'block';
+    setTimeout(() => {
+      document.getElementById('logoutMessage').style.display = 'none';
+    }, 10000);
+    localStorage.removeItem('logout');
   }
 
-  const res = await fetch('http://localhost:3000/api/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, fullname })
+  if (localStorage.getItem('userData')) {
+    document.body.classList.remove('blurred');
+    document.getElementById('loginContainer').style.display = 'none';
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = form.username.value.trim();
+    const email = form.email.value.trim();
+    const phone = form.phone.value.trim();
+
+    if (name && email && phone) {
+      const userData = { name, email, phone };
+      localStorage.setItem('userData', JSON.stringify(userData));
+      document.getElementById('loginContainer').style.display = 'none';
+      document.body.classList.remove('blurred');
+    }
   });
 
-  const data = await res.json();
-
-  if (data.success) {
-    localStorage.setItem('user', JSON.stringify(data.user));
-    alert('تم تسجيل الدخول بنجاح');
-    window.location.href = 'index.html';
-  } else {
-    alert('حدث خطأ أثناء تسجيل الدخول');
+  const logoutBtn = document.getElementById('logoutBtn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+      localStorage.removeItem('userData');
+      localStorage.setItem('logout', 'true');
+      window.location.reload();
+    });
   }
-}
+});

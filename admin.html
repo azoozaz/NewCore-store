@@ -2,147 +2,132 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <title>لوحة التحكم - XFaction</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>لوحة تحكم XFaction</title>
   <style>
     body {
-      background: #101010;
+      background: #0e0e0e;
       color: white;
       font-family: sans-serif;
-      padding: 40px;
-    }
-    .header {
-      text-align: center;
-      margin-bottom: 40px;
-    }
-    .logout {
-      margin-top: 20px;
-      padding: 10px 25px;
-      font-weight: bold;
-    }
-    .side-panels {
-      position: absolute;
-      top: 40px;
-      right: 40px;
-      display: flex;
-      gap: 20px;
-    }
-    .info-box {
-      background: #1b1b1b;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 20px rgba(0,255,213,0.2);
-      width: 300px;
-      max-height: 500px;
-      overflow-y: auto;
-    }
-    .info-box h3 {
-      margin-bottom: 15px;
-      color: #00ffd5;
-    }
-    .info-box ul {
-      list-style: none;
-      padding: 0;
       margin: 0;
     }
-    .info-box li {
-      padding: 8px 0;
-      border-bottom: 1px solid #333;
+    .login-screen {
+      display: flex;
+      height: 100vh;
+      justify-content: center;
+      align-items: center;
+      background: #0e0e0e;
+    }
+    .login-box {
+      background: #1a1a1a;
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+    }
+    .login-box input {
+      padding: 10px;
+      width: 250px;
+      margin-top: 10px;
+      border-radius: 5px;
+      border: none;
+    }
+    .login-box button {
+      padding: 10px 20px;
+      margin-top: 15px;
+      background: #00ffd5;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .dashboard {
+      display: none;
+      padding: 30px;
+    }
+    .container {
+      display: flex;
+      justify-content: space-between;
+    }
+    .section {
+      background: #1a1a1a;
+      padding: 20px;
+      border-radius: 10px;
+      width: 48%;
+      box-shadow: 0 0 10px rgba(0,255,213,0.1);
+    }
+    .section h2 {
+      color: #00ffd5;
+      margin-bottom: 20px;
+    }
+    .section ul {
+      list-style: none;
+      padding: 0;
+    }
+    .section li {
+      margin-bottom: 10px;
+      background: #222;
+      padding: 10px;
+      border-radius: 6px;
     }
   </style>
 </head>
-<body onload="checkAccess(); loadData();">
-  <div class="header">
-    <h2>لوحة التحكم</h2>
-    <p>تم الدخول بنجاح 🎉</p>
-    <p id="availableCount">📦 المنتجات المتوفرة: ...</p>
-    <button class="logout" onclick="logout()">تسجيل خروج</button>
+<body>
+  <div class="login-screen" id="loginScreen">
+    <div class="login-box">
+      <h3>دخول لوحة التحكم</h3>
+      <input type="password" id="adminKey" placeholder="أدخل الرمز السري" />
+      <br />
+      <button onclick="verifyAccess()">دخول</button>
+    </div>
   </div>
 
-
-<div style="margin: 60px auto 0; width: 90%; max-width: 800px;">
-  <h3 style="color: #00ffd5; text-align: center;">📊 إحصائية المبيعات</h3>
-  <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 20px;">
-    <select id="productFilter" onchange="renderChart()" style="padding: 8px; font-weight: bold;">
-      <option value="">كل المنتجات</option>
-    </select>
-    <select id="dateFilter" onchange="renderChart()" style="padding: 8px; font-weight: bold;">
-      <option value="">كل الأوقات</option>
-      <option value="7">آخر 7 أيام</option>
-      <option value="30">آخر 30 يوم</option>
-    </select>
+  <div class="dashboard" id="adminPanel">
+    <h1 style="text-align:center;">📊 لوحة تحكم XFaction</h1>
+    <div class="container">
+      <div class="section" style="order: 2; width: 48%;">
+        <h2>📋 الطلبات</h2>
+        <ul id="orderList"></ul>
+      </div>
+      <div class="section" style="order: 1; width: 48%;">
+        <h2>👥 الزوار</h2>
+        <ul id="visitorList"></ul>
+      </div>
+    </div>
   </div>
-  <canvas id="salesChart" width="800" height="300" style="background:#1b1b1b; padding: 20px; border-radius: 12px;"></canvas>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-  let allOrders = [];
-
-  async function renderChart() {
-    if (!allOrders.length) {
-      try {
-        const res = await fetch('http://localhost:3000/api/orders');
-        allOrders = await res.json();
-        populateProductFilter();
-      } catch {
-        console.error("فشل تحميل الطلبات");
-        return;
+  <script>
+    function verifyAccess() {
+      const input = document.getElementById("adminKey").value;
+      if (input === "12341234") {
+        document.getElementById("loginScreen").style.display = "none";
+        document.getElementById("adminPanel").style.display = "block";
+        loadVisitors();
+        loadOrders();
+      } else {
+        alert("رمز خاطئ");
       }
     }
 
-    const product = document.getElementById("productFilter").value;
-    const days = parseInt(document.getElementById("dateFilter").value || 0);
+    function loadVisitors() {
+      const visitors = JSON.parse(localStorage.getItem("visitors") || "[]");
+      const list = document.getElementById("visitorList");
+      list.innerHTML = "";
+      visitors.forEach(v => {
+        const li = document.createElement("li");
+        li.innerText = `👤 ${v.name} - ${v.phone}`;
+        list.appendChild(li);
+      });
+    }
 
-    const now = new Date();
-    const filtered = allOrders.filter(o => {
-      const matchProduct = product === "" || o.productName === product;
-      const matchDate = !days || (new Date(o.timestamp || o.time)).getTime() >= now.getTime() - (days * 86400000);
-      return matchProduct && matchDate;
-    });
-
-    const counts = {};
-    filtered.forEach(o => {
-      counts[o.productName] = (counts[o.productName] || 0) + 1;
-    });
-
-    const ctx = document.getElementById('salesChart').getContext('2d');
-    if (window.myChart) window.myChart.destroy();
-    window.myChart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: Object.keys(counts),
-        datasets: [{
-          label: 'عدد المرات',
-          data: Object.values(counts),
-          backgroundColor: '#00ffd5'
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { display: false },
-          title: { display: true, text: 'عدد المنتجات المباعة' }
-        },
-        scales: {
-          y: { beginAtZero: true }
-        }
-      }
-    });
-  }
-
-  function populateProductFilter() {
-    const select = document.getElementById("productFilter");
-    const products = [...new Set(allOrders.map(o => o.productName))];
-    products.forEach(p => {
-      const opt = document.createElement("option");
-      opt.value = p;
-      opt.textContent = p;
-      select.appendChild(opt);
-    });
-  }
-</script>
-
+    function loadOrders() {
+      const orders = JSON.parse(localStorage.getItem("orders") || "[]");
+      const list = document.getElementById("orderList");
+      list.innerHTML = "";
+      orders.forEach(o => {
+        const li = document.createElement("li");
+        li.innerHTML = `<strong>${o.name}</strong><br>📱 ${o.phone}<br>📦 ${o.items.map(i => i.name + " - " + i.price + " ريال").join("<br>")}<br>📍 ${o.address}`;
+        list.appendChild(li);
+      });
+    }
+  </script>
 </body>
 </html>

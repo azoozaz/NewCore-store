@@ -2,28 +2,158 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <title>سلة المشتريات</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>سلة XFaction</title>
+  <style>
+    body {
+      background-color: #0e0e0e;
+      color: white;
+      font-family: sans-serif;
+      margin: 0;
+    }
+    header {
+      background: #111;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header .nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 20px;
+      font-weight: bold;
+    }
+    .cart-container {
+      padding: 30px;
+    }
+    .cart-item {
+      display: flex;
+      align-items: center;
+      background: #1a1a1a;
+      margin-bottom: 20px;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,255,213,0.1);
+    }
+    .cart-item img {
+      width: 120px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 5px;
+      margin-left: 15px;
+    }
+    .cart-item .info {
+      flex: 1;
+    }
+    .cart-item .info h4 {
+      margin: 0 0 10px;
+      color: #00ffd5;
+    }
+    .cart-item .info .price {
+      color: #ff4444;
+      font-weight: bold;
+    }
+    .remove-btn {
+      background: #ff4444;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .total {
+      font-size: 1.2em;
+      text-align: center;
+      margin-top: 30px;
+      font-weight: bold;
+      color: #00ffd5;
+    }
+    .clear-btn {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      background: #ff4444;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-  <h1>🛒 سلة المشتريات</h1>
-  <div id="cart-items"></div>
+  <header>
+    <div class="nav">
+      <a href="index.html">الرئيسية</a>
+      <a href="products.html">المنتجات</a>
+      <a href="cart.html">السلة</a>
+    </div>
+    <div class="logo">XFaction 🛒</div>
+  </header>
+
+  <div class="cart-container" id="cartList">جاري التحميل...</div>
+  <div class="total" id="totalPrice"></div>
+  <button class="clear-btn" onclick="clearCart()">🗑️ إفراغ السلة</button>
+
+  
+<div style="text-align:center; margin-top: 40px;">
+  <a href="checkout.html">
+    <button style="padding: 12px 20px; background: #00ffd5; color: black; border: none; font-weight: bold; border-radius: 8px; cursor: pointer; margin-left: 10px;">
+      ✅ إتمام الطلب
+    </button>
+  </a>
+  <button onclick="window.location.href='products.html'" style="padding: 12px 20px; background: transparent; border: 2px solid #888; color: white; font-weight: bold; border-radius: 8px; cursor: pointer;">
+    ❌ إلغاء
+  </button>
+</div>
+
+
   <script>
-    const items = JSON.parse(localStorage.getItem('cart')) || [];
-    const container = document.getElementById('cart-items');
+    function loadCart() {
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      const container = document.getElementById("cartList");
+      const totalElement = document.getElementById("totalPrice");
 
-    let total = 0;
-    items.forEach(item => {
-      const div = document.createElement('div');
-      div.textContent = `${item.name} - ${item.price} ريال`;
-      container.appendChild(div);
-      total += item.price;
-    });
+      if (cart.length === 0) {
+        container.innerHTML = "<p style='text-align:center;'>السلة فارغة</p>";
+        totalElement.innerText = "";
+        return;
+      }
 
-    const totalDiv = document.createElement('div');
-    totalDiv.innerHTML = `<strong>الإجمالي: ${total} ريال</strong>`;
-    container.appendChild(totalDiv);
+      let total = 0;
+      container.innerHTML = "";
+      cart.forEach((item, index) => {
+        total += item.price;
+        const div = document.createElement("div");
+        div.className = "cart-item";
+        div.innerHTML = `
+          <img src="${item.image || 'https://via.placeholder.com/120x80'}" alt="${item.name}">
+          <div class="info">
+            <h4>${item.name}</h4>
+            <div class="price">${item.price} ريال</div>
+          </div>
+          <button class="remove-btn" onclick="removeItem(${index})">حذف</button>
+        `;
+        container.appendChild(div);
+      });
+
+      totalElement.innerText = `المجموع الكلي: ${total} ريال`;
+    }
+
+    function removeItem(index) {
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      cart.splice(index, 1);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      loadCart();
+    }
+
+    function clearCart() {
+      localStorage.removeItem("cart");
+      loadCart();
+    }
+
+    loadCart();
   </script>
 </body>
 </html>

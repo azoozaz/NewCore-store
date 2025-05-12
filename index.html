@@ -2,87 +2,220 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <title>XFaction | الرئيسية</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>XFaction Store</title>
   <style>
-    .admin-popup {
-      display: none;
-      position: absolute;
-      top: 60px;
-      left: 20px;
-      background: #111;
-      padding: 20px;
-      border-radius: 12px;
-      z-index: 999;
-      width: 250px;
-      box-shadow: 0 0 25px rgba(0,255,213,0.3);
-      backdrop-filter: blur(4px);
-      text-align: center;
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: #1f3a45;
+      color: white;
     }
-    .admin-popup input {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 12px;
+    header {
+      background: #0e1a1f;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header .nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 20px;
+      font-weight: bold;
+    }
+    .welcome {
+      text-align: center;
+      margin-top: 100px;
+    }
+    .welcome h1 {
+      font-size: 2.2em;
+    }
+    .user-info {
+      margin-top: 20px;
+      font-size: 1.1em;
+      color: #00ffd5;
+    }
+    .logout-btn {
+      background: #ff4444;
+      color: white;
       border: none;
-      background: #eee;
-      color: #000;
+      padding: 6px 14px;
       border-radius: 6px;
-      font-size: 14px;
-      text-align: center;
-    }
-    .admin-popup button {
-      background: #00ffd5;
-      color: #000;
-      border: none;
-      padding: 10px;
-      width: 100%;
       cursor: pointer;
       font-weight: bold;
-      border-radius: 6px;
-      transition: 0.2s;
     }
-    .admin-popup button:hover {
-      background: #00d2b1;
+    .form-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      backdrop-filter: blur(6px);
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
     }
+    .form-container {
+      background: #13262e;
+      padding: 25px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+    }
+    .form-container input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      font-size: 1em;
+      border-radius: 5px;
+      border: none;
+    }
+    .form-container button {
+      width: 100%;
+      padding: 10px;
+      background: #00ffd5;
+      border: none;
+      border-radius: 5px;
+      font-size: 1em;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    #overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.9);
+      color: #00ffd5;
+      font-size: 1.6em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      flex-direction: column;
+    }
+    #starRating span {
+  font-size: 28px;
+  color: gray;
+  cursor: pointer;
+  transition: 0.2s;
+}
+#starRating span:hover,
+#starRating span.hovered {
+  color: gold;
+}
+
   </style>
 </head>
-<body>
-  <header class="site-header">
-    <div class="logo">🛒 XFaction</div>
-    <nav class="main-nav">
+<body onload="checkUser()">
+  
+
+
+    <div id="overlay" style="display:none;">
+        <h2 style="margin-bottom: 10px;">✨ شرفتنا بزيارتك للموقع</h2>
+    <p style="color: #aaa; font-size: 14px;">يتم تحويلك لتسجيل الدخول...</p>
+    </div>
+
+  <header>
+    <div class="nav">
       <a href="index.html">الرئيسية</a>
       <a href="products.html">المنتجات</a>
       <a href="cart.html">السلة</a>
-      <div style="position: relative;">
-        <a href="#" onclick="toggleAdminPopup()">لوحة التحكم</a>
-        <div class="admin-popup" id="adminPopup">
-          <input type="password" id="adminPopupCode" placeholder="رمز الدخول (123123)" required>
-          <button onclick="submitAdminPopup()">دخول</button>
-        </div>
-      </div>
-    </nav>
+      <a href="admin.html">لوحة التحكم</a>
+    </div>
+    <div>
+      <span id="userName" class="user-info"></span>
+      <button onclick="logout()" class="logout-btn" style="display:none;" id="logoutBtn">تسجيل خروج</button>
+    </div>
   </header>
 
-  <main style="text-align:center;padding:80px 0;">
-    <h1>مرحبًا بك في XFaction</h1>
+  <div class="form-overlay" id="formOverlay">
+    <div class="form-container" id="regForm">
+      <h2>تسجيل الدخول</h2>
+      <input type="text" id="name" placeholder="الاسم" />
+      <input type="email" id="email" placeholder="الإيميل" />
+      <input type="tel" id="phone" placeholder="رقم الجوال" />
+      <button onclick="registerUser()">دخول</button>
+    </div>
+  </div>
+
+  <div class="welcome" id="welcomeText" style="display:none;">
+ 
+
+    <h1>مرحبًا بك في <span style="color:#00ffd5;">XFaction</span></h1>
     <p>شركة إلكترونية تقدم لك منتجات مميزة بجودة عالية وسهولة طلب.</p>
-  </main>
+       <div class="review-section" style="margin: 60px auto; max-width: 500px; background: #13262e; padding: 20px; border-radius: 10px;">
+  <h3 style="color:#00ffd5;">قيّم المتجر:</h3>
+  <div id="starRating">
+    <span onclick="rateStore(1)">★</span>
+    <span onclick="rateStore(2)">★</span>
+    <span onclick="rateStore(3)">★</span>
+    <span onclick="rateStore(4)">★</span>
+    <span onclick="rateStore(5)">★</span>
+  </div>
+  <p style="margin-top:15px;" id="ratingStatus"></p>
+  <div id="ratingsList" style="margin-top:20px; color:#ccc;"></div>
+  
+</div>
+  </div>
 
   <script>
-    function toggleAdminPopup() {
-      const popup = document.getElementById('adminPopup');
-      popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
+      function rateStore(stars) {
+    const user = JSON.parse(localStorage.getItem("visitor"));
+    if (!user) return alert("سجّل دخولك أولاً");
+
+    const reviews = JSON.parse(localStorage.getItem("reviews") || "[]");
+    const found = reviews.find(r => r.name === user.name);
+    if (found) return alert("سبق وقيّمت المتجر.");
+
+    reviews.push({ name: user.name, stars });
+    localStorage.setItem("reviews", JSON.stringify(reviews));
+    document.getElementById("ratingStatus").innerText = "شكرًا لتقييمك!";
+    showRatings();
+  }
+
+  function showRatings() {
+    const reviews = JSON.parse(localStorage.getItem("reviews") || "[]");
+    if (!reviews.length) return;
+
+    let html = "<strong>الأشخاص الذين قاموا بالتقييم:</strong><ul>";
+    reviews.forEach(r => {
+      html += `<li>${r.name} - ${'⭐'.repeat(r.stars)}</li>`;
+    });
+    html += "</ul>";
+    document.getElementById("ratingsList").innerHTML = html;
+  }
+
+  showRatings();
+    function checkUser() {
+      const user = JSON.parse(localStorage.getItem("visitor"));
+      if (!user) {
+        document.getElementById("formOverlay").style.display = "flex";
+      } else {
+        document.getElementById("welcomeText").style.display = "block";
+        document.getElementById("userName").innerText = user.name;
+        document.getElementById("logoutBtn").style.display = "inline-block";
+      }
     }
 
-    function submitAdminPopup() {
-      const code = document.getElementById('adminPopupCode').value.trim();
-      if (code === '123123') {
-        localStorage.setItem('adminAccess', 'true');
-        window.location.href = 'admin.html';
-      } else {
-        alert('رمز خاطئ');
-      }
+    function registerUser() {
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const phone = document.getElementById("phone").value;
+      if (!name || !email || !phone) return alert("املأ جميع الحقول");
+
+      const visitor = { name, email, phone, time: new Date().toLocaleString() };
+      localStorage.setItem("visitor", JSON.stringify(visitor));
+      location.reload();
+    }
+
+    function logout() {
+      localStorage.removeItem("visitor");
+      document.getElementById("overlay").style.display = "flex";
+      setTimeout(() => location.reload(), 10000);
     }
   </script>
 </body>
