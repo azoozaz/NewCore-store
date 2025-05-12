@@ -794,17 +794,20 @@
 
   document.getElementById("todayVisitors").innerText = todayCount;
 
-  if (lastVisit) {
-    const diffMin = Math.floor((now - new Date(lastVisit)) / 60000);
-    let result = "-";
-    if (diffMin < 60) result = `${diffMin} دقيقة`;
-    else if (diffMin < 1440) result = `${Math.floor(diffMin / 60)} ساعة`;
-    else result = `${Math.floor(diffMin / 1440)} يوم`;
+if (lastVisit) {
+  const lastDate = new Date(lastVisit);
+  const diffMin = Math.floor((Date.now() - lastDate.getTime()) / 60000);
 
-    document.getElementById("lastVisit").innerText = result;
-  } else {
-    document.getElementById("lastVisit").innerText = "-";
-  }
+  let result = "-";
+  if (diffMin < 60) result = `${diffMin} دقيقة`;
+  else if (diffMin < 1440) result = `${Math.floor(diffMin / 60)} ساعة`;
+  else result = `${Math.floor(diffMin / 1440)} يوم`;
+
+  document.getElementById("lastVisit").innerText = result;
+} else {
+  document.getElementById("lastVisit").innerText = "-";
+}
+
 }
 
 updateVisitorStats();
