@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -45,13 +46,12 @@
     .container {
       display: flex;
       justify-content: space-between;
-      gap: 20px;
     }
     .section {
       background: #1a1a1a;
       padding: 20px;
       border-radius: 10px;
-      width: 50%;
+      width: 48%;
       box-shadow: 0 0 10px rgba(0,255,213,0.1);
     }
     .section h2 {
@@ -67,27 +67,15 @@
       background: #222;
       padding: 10px;
       border-radius: 6px;
-      position: relative;
-    }
-    .delete-btn {
-      position: absolute;
-      left: 10px;
-      top: 10px;
-      background: #ff4444;
-      border: none;
-      padding: 4px 8px;
-      border-radius: 4px;
-      cursor: pointer;
-      color: white;
-      font-size: 12px;
     }
   </style>
 </head>
 <body>
   <div class="login-screen" id="loginScreen">
     <div class="login-box">
-      <h3>دخول لوحة التحكم</h3>
-      <input type="password" id="adminKey" placeholder="أدخل الرمز السري" />
+      <h2>دخول المشرف</h2>
+      <input type="email" id="adminEmail" placeholder="الإيميل الإداري" />
+      <input type="password" id="adminCode" placeholder="كود الدخول" />
       <br />
       <button onclick="verifyAccess()">دخول</button>
     </div>
@@ -96,11 +84,11 @@
   <div class="dashboard" id="adminPanel">
     <h1 style="text-align:center;">📊 لوحة تحكم XFaction</h1>
     <div class="container">
-      <div class="section">
+      <div class="section" style="order: 2;">
         <h2>📋 الطلبات</h2>
         <ul id="orderList"></ul>
       </div>
-      <div class="section">
+      <div class="section" style="order: 1;">
         <h2>👥 الزوار</h2>
         <ul id="visitorList"></ul>
       </div>
@@ -108,15 +96,20 @@
   </div>
 
   <script>
+    const ADMIN_EMAIL = "admin@xfaction.com";
+    const ADMIN_CODE = "12341234";
+
     function verifyAccess() {
-      const input = document.getElementById("adminKey").value;
-      if (input === "12341234") {
+      const email = document.getElementById("adminEmail").value;
+      const code = document.getElementById("adminCode").value;
+
+      if (email === ADMIN_EMAIL && code === ADMIN_CODE) {
         document.getElementById("loginScreen").style.display = "none";
         document.getElementById("adminPanel").style.display = "block";
         loadVisitors();
         loadOrders();
       } else {
-        alert("رمز خاطئ");
+        alert("بيانات الدخول غير صحيحة");
       }
     }
 
@@ -127,7 +120,7 @@
       visitors.forEach((v, index) => {
         const li = document.createElement("li");
         li.innerHTML = `👤 ${v.name} - ${v.phone}
-          <button class="delete-btn" onclick="deleteVisitor(${index})">❌</button>`;
+          <button onclick="deleteVisitor(${index})" style="float:left; background:#ff4444; border:none; color:white; padding:2px 6px; border-radius:4px;">✖</button>`;
         list.appendChild(li);
       });
     }
@@ -138,13 +131,8 @@
       list.innerHTML = "";
       orders.forEach((o, index) => {
         const li = document.createElement("li");
-        li.innerHTML = `
-          <strong>${o.name}</strong><br>
-          📱 ${o.phone}<br>
-          📦 ${o.items.map(i => i.name + " - " + i.price + " ريال").join("<br>")}<br>
-          📍 ${o.address}
-          <button class="delete-btn" onclick="deleteOrder(${index})">❌</button>
-        `;
+        li.innerHTML = `<strong>${o.name}</strong><br>📱 ${o.phone}<br>📦 ${o.items.map(i => i.name + " - " + i.price + " ريال").join("<br>")}<br>📍 ${o.address}
+          <button onclick="deleteOrder(${index})" style="float:left; background:#ff4444; border:none; color:white; padding:2px 6px; border-radius:4px;">✖</button>`;
         list.appendChild(li);
       });
     }
@@ -155,7 +143,6 @@
       localStorage.setItem("visitors", JSON.stringify(visitors));
       loadVisitors();
     }
-
 
     function deleteOrder(index) {
       const orders = JSON.parse(localStorage.getItem("orders") || "[]");
