@@ -815,6 +815,57 @@ function updateVisitorStats() {
 }
 
 updateVisitorStats();
+const express = require("express");
+const cors = require("cors");
+const fs = require("fs");
+const path = require("path");
+const app = express();
+const port = 3000;
+
+app.use(cors());
+app.use(express.json());
+
+const DB_PATH = path.join(__dirname, "visitors.json");
+
+function readVisitors() {
+  if (!fs.existsSync(DB_PATH)) return [];
+  try {
+    const data = fs.readFileSync(DB_PATH, "utf-8");
+    return JSON.parse(data);
+  } catch (err) {
+    console.error("Failed to read visitors.json:", err);
+    return [];
+  }
+}
+
+function writeVisitors(data) {
+  fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2));
+}
+
+// POST /api/visitors
+app.post("/api/visitors", (req, res) => {
+  const { name, email, phone, time } = req.body;
+  if (!name || !email || !phone || !time) {
+    return res.status(400).json({ success: false, message: "Missing fields." });
+  }
+
+  const visitors = readVisitors();
+  const visitor = { id: Date.now(), name, email, phone, time };
+  visitors.push(visitor);
+  writeVisitors(visitors);
+
+  res.json({ success: true, visitor });
+});
+
+// GET /api/visitors
+app.get("/api/visitors", (req, res) => {
+  const visitors = readVisitors();
+  res.json(visitors);
+});
+
+app.listen(port, () => {
+  console.log(`Visitor API running on http://localhost:${port}`);
+});
 
 
     function showRatings() {
