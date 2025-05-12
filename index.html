@@ -200,17 +200,28 @@
         document.getElementById("logoutBtn").style.display = "inline-block";
       }
     }
+function saveVisitor(visitor) {
+  const visitors = JSON.parse(localStorage.getItem("visitors") || "[]");
+  visitors.push(visitor);
+  localStorage.setItem("visitors", JSON.stringify(visitors));
+}
+function registerUser() {
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value;
+  const phone = document.getElementById("phone").value;
+  if (!name || !email || !phone) return alert("املأ جميع الحقول");
 
-    function registerUser() {
-      const name = document.getElementById("name").value;
-      const email = document.getElementById("email").value;
-      const phone = document.getElementById("phone").value;
-      if (!name || !email || !phone) return alert("املأ جميع الحقول");
+  const visitor = { name, email, phone, time: new Date().toLocaleString() };
+  localStorage.setItem("visitor", JSON.stringify(visitor));
 
-      const visitor = { name, email, phone, time: new Date().toLocaleString() };
-      localStorage.setItem("visitor", JSON.stringify(visitor));
-      location.reload();
-    }
+  // نحفظ الزائر في القائمة العامة
+  const visitors = JSON.parse(localStorage.getItem("visitors") || "[]");
+  visitors.push(visitor);
+  localStorage.setItem("visitors", JSON.stringify(visitors));
+
+  location.reload();
+}
+
 
     function logout() {
       localStorage.removeItem("visitor");
