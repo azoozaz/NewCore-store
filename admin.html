@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -46,12 +45,13 @@
     .container {
       display: flex;
       justify-content: space-between;
+      gap: 20px;
     }
     .section {
       background: #1a1a1a;
       padding: 20px;
       border-radius: 10px;
-      width: 48%;
+      width: 50%;
       box-shadow: 0 0 10px rgba(0,255,213,0.1);
     }
     .section h2 {
@@ -67,6 +67,19 @@
       background: #222;
       padding: 10px;
       border-radius: 6px;
+      position: relative;
+    }
+    .delete-btn {
+      position: absolute;
+      left: 10px;
+      top: 10px;
+      background: #ff4444;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      color: white;
+      font-size: 12px;
     }
   </style>
 </head>
@@ -83,11 +96,11 @@
   <div class="dashboard" id="adminPanel">
     <h1 style="text-align:center;">📊 لوحة تحكم XFaction</h1>
     <div class="container">
-      <div class="section" style="order: 2; width: 48%;">
+      <div class="section">
         <h2>📋 الطلبات</h2>
         <ul id="orderList"></ul>
       </div>
-      <div class="section" style="order: 1; width: 48%;">
+      <div class="section">
         <h2>👥 الزوار</h2>
         <ul id="visitorList"></ul>
       </div>
@@ -111,9 +124,10 @@
       const visitors = JSON.parse(localStorage.getItem("visitors") || "[]");
       const list = document.getElementById("visitorList");
       list.innerHTML = "";
-      visitors.forEach(v => {
+      visitors.forEach((v, index) => {
         const li = document.createElement("li");
-        li.innerText = `👤 ${v.name} - ${v.phone}`;
+        li.innerHTML = `👤 ${v.name} - ${v.phone}
+          <button class="delete-btn" onclick="deleteVisitor(${index})">❌</button>`;
         list.appendChild(li);
       });
     }
@@ -122,11 +136,31 @@
       const orders = JSON.parse(localStorage.getItem("orders") || "[]");
       const list = document.getElementById("orderList");
       list.innerHTML = "";
-      orders.forEach(o => {
+      orders.forEach((o, index) => {
         const li = document.createElement("li");
-        li.innerHTML = `<strong>${o.name}</strong><br>📱 ${o.phone}<br>📦 ${o.items.map(i => i.name + " - " + i.price + " ريال").join("<br>")}<br>📍 ${o.address}`;
+        li.innerHTML = `
+          <strong>${o.name}</strong><br>
+          📱 ${o.phone}<br>
+          📦 ${o.items.map(i => i.name + " - " + i.price + " ريال").join("<br>")}<br>
+          📍 ${o.address}
+          <button class="delete-btn" onclick="deleteOrder(${index})">❌</button>
+        `;
         list.appendChild(li);
       });
+    }
+
+    function deleteVisitor(index) {
+      const visitors = JSON.parse(localStorage.getItem("visitors") || "[]");
+      visitors.splice(index, 1);
+      localStorage.setItem("visitors", JSON.stringify(visitors));
+      loadVisitors();
+    }
+
+    function deleteOrder(index) {
+      const orders = JSON.parse(localStorage.getItem("orders") || "[]");
+      orders.splice(index, 1);
+      localStorage.setItem("orders", JSON.stringify(orders));
+      loadOrders();
     }
   </script>
 </body>
