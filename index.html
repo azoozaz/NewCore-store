@@ -98,24 +98,26 @@
       flex-direction: column;
     }
     #starRating span {
-      font-size: 28px;
-      color: gray;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    #starRating span:hover,
-    #starRating span.hovered {
-      color: gold;
-    }
+  font-size: 28px;
+  color: gray;
+  cursor: pointer;
+  transition: 0.2s;
+}
+#starRating span:hover,
+#starRating span.hovered {
+  color: gold;
+}
+
   </style>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js"></script>
 </head>
 <body onload="checkUser()">
-  <div id="overlay">
-    <h2 style="margin-bottom: 10px;">✨ شرفتنا بزيارتك للموقع</h2>
+  
+
+
+    <div id="overlay" style="display:none;">
+        <h2 style="margin-bottom: 10px;">✨ شرفتنا بزيارتك للموقع</h2>
     <p style="color: #aaa; font-size: 14px;">يتم تحويلك لتسجيل الدخول...</p>
-  </div>
+    </div>
 
   <header>
     <div class="nav">
@@ -141,31 +143,53 @@
   </div>
 
   <div class="welcome" id="welcomeText" style="display:none;">
+ 
+
     <h1>مرحبًا بك في <span style="color:#00ffd5;">XFaction</span></h1>
     <p>شركة إلكترونية تقدم لك منتجات مميزة بجودة عالية وسهولة طلب.</p>
-    <div class="review-section" style="margin: 60px auto; max-width: 500px; background: #13262e; padding: 20px; border-radius: 10px;">
-      <h3 style="color:#00ffd5;">قيّم المتجر:</h3>
-      <div id="starRating">
-        <span onclick="rateStore(1)">★</span>
-        <span onclick="rateStore(2)">★</span>
-        <span onclick="rateStore(3)">★</span>
-        <span onclick="rateStore(4)">★</span>
-        <span onclick="rateStore(5)">★</span>
-      </div>
-      <p style="margin-top:15px;" id="ratingStatus"></p>
-      <div id="ratingsList" style="margin-top:20px; color:#ccc;"></div>
-    </div>
+       <div class="review-section" style="margin: 60px auto; max-width: 500px; background: #13262e; padding: 20px; border-radius: 10px;">
+  <h3 style="color:#00ffd5;">قيّم المتجر:</h3>
+  <div id="starRating">
+    <span onclick="rateStore(1)">★</span>
+    <span onclick="rateStore(2)">★</span>
+    <span onclick="rateStore(3)">★</span>
+    <span onclick="rateStore(4)">★</span>
+    <span onclick="rateStore(5)">★</span>
+  </div>
+  <p style="margin-top:15px;" id="ratingStatus"></p>
+  <div id="ratingsList" style="margin-top:20px; color:#ccc;"></div>
+  
+</div>
   </div>
 
   <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyBlQRe187CdxcxVKfA99-v1oQtd9il6E4U",
-      authDomain: "projectazo-49c65.firebaseapp.com",
-      projectId: "projectazo-49c65"
-    };
-    const app = firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+      function rateStore(stars) {
+    const user = JSON.parse(localStorage.getItem("visitor"));
+    if (!user) return alert("سجّل دخولك أولاً");
 
+    const reviews = JSON.parse(localStorage.getItem("reviews") || "[]");
+    const found = reviews.find(r => r.name === user.name);
+    if (found) return alert("سبق وقيّمت المتجر.");
+
+    reviews.push({ name: user.name, stars });
+    localStorage.setItem("reviews", JSON.stringify(reviews));
+    document.getElementById("ratingStatus").innerText = "شكرًا لتقييمك!";
+    showRatings();
+  }
+
+  function showRatings() {
+    const reviews = JSON.parse(localStorage.getItem("reviews") || "[]");
+    if (!reviews.length) return;
+
+    let html = "<strong>الأشخاص الذين قاموا بالتقييم:</strong><ul>";
+    reviews.forEach(r => {
+      html += `<li>${r.name} - ${'⭐'.repeat(r.stars)}</li>`;
+    });
+    html += "</ul>";
+    document.getElementById("ratingsList").innerHTML = html;
+  }
+
+  showRatings();
     function checkUser() {
       const user = JSON.parse(localStorage.getItem("visitor"));
       if (!user) {
@@ -176,61 +200,34 @@
         document.getElementById("logoutBtn").style.display = "inline-block";
       }
     }
+function saveVisitor(visitor) {
+  const visitors = JSON.parse(localStorage.getItem("visitors") || "[]");
+  visitors.push(visitor);
+  localStorage.setItem("visitors", JSON.stringify(visitors));
+}
+function registerUser() {
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value;
+  const phone = document.getElementById("phone").value;
+  if (!name || !email || !phone) return alert("املأ جميع الحقول");
 
-    function registerUser() {
-      const name = document.getElementById("name").value;
-      const email = document.getElementById("email").value;
-      const phone = document.getElementById("phone").value;
-      if (!name || !email || !phone) return alert("املأ جميع الحقول");
+  const visitor = { name, email, phone, time: new Date().toLocaleString() };
+  localStorage.setItem("visitor", JSON.stringify(visitor));
 
-      const visitor = { name, email, phone, time: new Date().toLocaleString() };
-      localStorage.setItem("visitor", JSON.stringify(visitor));
+  // نحفظ الزائر في القائمة العامة
+  const visitors = JSON.parse(localStorage.getItem("visitors") || "[]");
+  visitors.push(visitor);
+  localStorage.setItem("visitors", JSON.stringify(visitors));
 
-      const visitors = JSON.parse(localStorage.getItem("visitors") || "[]");
-      visitors.push(visitor);
-      localStorage.setItem("visitors", JSON.stringify(visitors));
+  location.reload();
+}
 
-      db.collection("visitors").add(visitor).then(() => {
-        location.reload();
-      }).catch(err => {
-        alert("خطأ في حفظ البيانات إلى Firestore");
-        console.error(err);
-      });
-    }
 
     function logout() {
       localStorage.removeItem("visitor");
       document.getElementById("overlay").style.display = "flex";
       setTimeout(() => location.reload(), 10000);
     }
-
-    function rateStore(stars) {
-      const user = JSON.parse(localStorage.getItem("visitor"));
-      if (!user) return alert("سجّل دخولك أولاً");
-
-      const reviews = JSON.parse(localStorage.getItem("reviews") || "[]");
-      const found = reviews.find(r => r.name === user.name);
-      if (found) return alert("سبق وقيّمت المتجر.");
-
-      reviews.push({ name: user.name, stars });
-      localStorage.setItem("reviews", JSON.stringify(reviews));
-      document.getElementById("ratingStatus").innerText = "شكرًا لتقييمك!";
-      showRatings();
-    }
-
-    function showRatings() {
-      const reviews = JSON.parse(localStorage.getItem("reviews") || "[]");
-      if (!reviews.length) return;
-
-      let html = "<strong>الأشخاص الذين قاموا بالتقييم:</strong><ul>";
-      reviews.forEach(r => {
-        html += `<li>${r.name} - ${'⭐'.repeat(r.stars)}</li>`;
-      });
-      html += "</ul>";
-      document.getElementById("ratingsList").innerHTML = html;
-    }
-
-    showRatings();
   </script>
 </body>
 </html>
