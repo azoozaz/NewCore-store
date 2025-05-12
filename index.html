@@ -488,10 +488,49 @@
       text-decoration: none;
       font-size: 0.9rem;
       transition: color 0.3s ease;
+      position: relative;
     }
     
     .footer-links a:hover {
       color: var(--primary);
+    }
+    
+    /* تصميم مربعات المعلومات التي تظهر عند تمرير المؤشر فوق روابط الفوتر */
+    .footer-links a .info-box {
+      position: absolute;
+      bottom: 100%;
+      right: 50%;
+      transform: translateX(50%);
+      width: 250px;
+      padding: 15px;
+      background: rgba(10, 26, 32, 0.9);
+      border: 1px solid var(--primary);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 0.85rem;
+      text-align: right;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      margin-bottom: 10px;
+      z-index: 100;
+    }
+    
+    .footer-links a:hover .info-box {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .footer-links a .info-box:after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      right: 50%;
+      transform: translateX(50%);
+      border-width: 8px;
+      border-style: solid;
+      border-color: var(--primary) transparent transparent transparent;
     }
     
     .copyright {
@@ -533,6 +572,10 @@
       
       #starRating span {
         font-size: 30px;
+      }
+      
+      .footer-links a .info-box {
+        width: 200px;
       }
     }
   </style>
@@ -584,18 +627,14 @@
     <div class="container">
       <h1>مرحبًا بك في <span>XFaction</span></h1>
       <p>المتجر الإلكتروني الأمثل لتجربة تسوق مميزة - منتجات عالية الجودة بأسعار منافسة وتوصيل سريع</p>
-      <a href="products.html" class="cta-button">تصفح منتجاتنا</a>
+      <a href="products.html" class="cta-button" onclick="goToProducts()">تصفح منتجاتنا</a>
     </div>
   </div>
   
   <section class="features">
     <div class="container">
       <div class="features-container">
-        <!-- <div class="feature-card">
-          <div class="feature-icon">🚚</div>
-          <h3 class="feature-title">توصيل سريع</h3>
-          <p class="feature-description">نضمن وصول منتجاتك بأسرع وقت وبأمان تام إلى باب منزلك</p>
-        </div> -->
+
         <div class="feature-card">
           <div class="feature-icon">💯</div>
           <h3 class="feature-title">جودة عالية</h3>
@@ -628,10 +667,32 @@
   <footer>
     <div class="container">
       <div class="footer-links">
-        <a href="#">من نحن</a>
-        <a href="#">سياسة الخصوصية</a>
-        <a href="#">الشروط والأحكام</a>
-        <a href="#">تواصل معنا</a>
+        <a href="#">
+          من نحن
+          <div class="info-box">
+            متجر XFaction هو متجر إلكتروني متخصص بتقديم منتجات عالية الجودة بأسعار تنافسية. تأسس عام 2023 ويهدف إلى توفير تجربة تسوق سهلة وممتعة لعملائنا.
+          </div>
+        </a>
+        <a href="#">
+          سياسة الخصوصية
+          <div class="info-box">
+            نحن نهتم بخصوصية بياناتك. لن نشارك معلوماتك الشخصية مع أي جهة خارجية. نستخدم بياناتك فقط لتحسين تجربتك على موقعنا وتسهيل عمليات الشراء والشحن.
+          </div>
+        </a>
+        <a href="#">
+          الشروط والأحكام
+          <div class="info-box">
+            باستخدامك لموقعنا، فإنك توافق على شروطنا وأحكامنا. نحتفظ بحق تغيير المحتوى دون إشعار مسبق. يرجى مراجعة هذه الصفحة بانتظام للاطلاع على أي تحديثات.
+          </div>
+        </a>
+        <a href="#">
+          تواصل معنا
+          <div class="info-box">
+            يمكنك التواصل معنا عبر البريد الإلكتروني: info@xfaction.com<br>
+            أو الاتصال على: 966-5XXXXXXXX<br>
+            ساعات العمل: من الأحد إلى الخميس، 9 صباحاً - 5 مساءً
+          </div>
+        </a>
       </div>
       <p class="copyright">جميع الحقوق محفوظة © XFaction Store 2025</p>
     </div>
@@ -651,6 +712,11 @@
         stars.forEach(s => s.classList.remove('hovered'));
       });
     });
+    
+    // وظيفة التوجيه إلى صفحة المنتجات
+    function goToProducts() {
+      window.location.href = 'products.html';
+    }
   
     function rateStore(stars) {
       const user = JSON.parse(localStorage.getItem("visitor"));
@@ -769,6 +835,8 @@
       document.getElementById("overlay").style.display = "flex";
       setTimeout(() => location.reload(), 3000);
     }
+
+    // تحميل
 
     // تحميل التقييمات عند بدء الصفحة
     showRatings();
