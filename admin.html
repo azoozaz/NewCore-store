@@ -69,6 +69,9 @@
       border-radius: 6px;
     }
   </style>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 </head>
 <body>
   <div class="login-screen" id="loginScreen">
@@ -96,6 +99,19 @@
   </div>
 
   <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBlQRe187CdxcxVKfA99-v1oQtd9il6E4U",
+      authDomain: "projectazo-49c65.firebaseapp.com",
+      projectId: "projectazo-49c65",
+      storageBucket: "projectazo-49c65.appspot.com",
+      messagingSenderId: "369654725402",
+      appId: "1:369654725402:web:9a36ae60f4df3441074aa3",
+      measurementId: "G-9JNW5E0XG3"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
     const ADMIN_EMAIL = "admin@xfaction.com";
     const ADMIN_CODE = "12341234";
 
@@ -114,14 +130,15 @@
     }
 
     function loadVisitors() {
-      const visitors = JSON.parse(localStorage.getItem("visitors") || "[]");
       const list = document.getElementById("visitorList");
       list.innerHTML = "";
-      visitors.forEach((v, index) => {
-        const li = document.createElement("li");
-        li.innerHTML = `👤 ${v.name} - ${v.phone}
-          <button onclick="deleteVisitor(${index})" style="float:left; background:#ff4444; border:none; color:white; padding:2px 6px; border-radius:4px;">✖</button>`;
-        list.appendChild(li);
+      db.collection("visitors").get().then(snapshot => {
+        snapshot.forEach(doc => {
+          const v = doc.data();
+          const li = document.createElement("li");
+          li.innerText = `👤 ${v.name} - ${v.phone}`;
+          list.appendChild(li);
+        });
       });
     }
 
@@ -131,17 +148,10 @@
       list.innerHTML = "";
       orders.forEach((o, index) => {
         const li = document.createElement("li");
-        li.innerHTML = `<strong>${o.name}</strong><br>📱 ${o.phone}<br>📦 ${o.items.map(i => i.name + " - " + i.price + " ريال").join("<br>")}<br>📍 ${o.address}
+        li.innerHTML = `<strong>${o.name}</strong><br>📱 ${o.phone}<br>🚞 ${o.items.map(i => i.name + " - " + i.price + " ريال").join("<br>")}<br>📍 ${o.address}
           <button onclick="deleteOrder(${index})" style="float:left; background:#ff4444; border:none; color:white; padding:2px 6px; border-radius:4px;">✖</button>`;
         list.appendChild(li);
       });
-    }
-
-    function deleteVisitor(index) {
-      const visitors = JSON.parse(localStorage.getItem("visitors") || "[]");
-      visitors.splice(index, 1);
-      localStorage.setItem("visitors", JSON.stringify(visitors));
-      loadVisitors();
     }
 
     function deleteOrder(index) {
