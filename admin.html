@@ -100,7 +100,7 @@
 
   <script>
     const firebaseConfig = {
-      apiKey: "1:369654725402:web:9a36ae60f4df3441074aa3",
+      apiKey: "AIzaSyBlQRe187CdxcxVKfA99-v1oQtd9il6E4U",
       authDomain: "projectazo-49c65.firebaseapp.com",
       projectId: "projectazo-49c65",
       storageBucket: "projectazo-49c65.appspot.com",
@@ -136,29 +136,24 @@
         snapshot.forEach(doc => {
           const v = doc.data();
           const li = document.createElement("li");
-          li.innerText = `👤 ${v.name} - ${v.phone}`;
+          li.textContent = `👤 ${v.name} - ${v.phone}`;
           list.appendChild(li);
         });
       });
     }
 
     function loadOrders() {
-      const orders = JSON.parse(localStorage.getItem("orders") || "[]");
       const list = document.getElementById("orderList");
       list.innerHTML = "";
-      orders.forEach((o, index) => {
-        const li = document.createElement("li");
-        li.innerHTML = `<strong>${o.name}</strong><br>📱 ${o.phone}<br>🚞 ${o.items.map(i => i.name + " - " + i.price + " ريال").join("<br>")}<br>📍 ${o.address}
-          <button onclick="deleteOrder(${index})" style="float:left; background:#ff4444; border:none; color:white; padding:2px 6px; border-radius:4px;">✖</button>`;
-        list.appendChild(li);
+      db.collection("orders").get().then(snapshot => {
+        snapshot.forEach(doc => {
+          const o = doc.data();
+          const li = document.createElement("li");
+          const itemsHtml = o.items.map(i => i.name + " - " + i.price + " ريال").join("<br>");
+          li.innerHTML = `<strong>${o.name}</strong><br>📱 ${o.phone}<br>🚞 ${itemsHtml}<br>📍 ${o.address}`;
+          list.appendChild(li);
+        });
       });
-    }
-
-    function deleteOrder(index) {
-      const orders = JSON.parse(localStorage.getItem("orders") || "[]");
-      orders.splice(index, 1);
-      localStorage.setItem("orders", JSON.stringify(orders));
-      loadOrders();
     }
   </script>
 </body>
