@@ -3,158 +3,85 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <title>لوحة تحكم XFaction</title>
+  <title>لوحة تحكم الزوار</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
   <style>
     body {
       background: #0e0e0e;
       color: white;
       font-family: sans-serif;
       margin: 0;
-    }
-    .login-screen {
-      display: flex;
-      height: 100vh;
-      justify-content: center;
-      align-items: center;
-      background: #0e0e0e;
-    }
-    .login-box {
-      background: #1a1a1a;
       padding: 30px;
-      border-radius: 10px;
+    }
+    h1 {
       text-align: center;
-    }
-    .login-box input {
-      padding: 10px;
-      width: 250px;
-      margin-top: 10px;
-      border-radius: 5px;
-      border: none;
-    }
-    .login-box button {
-      padding: 10px 20px;
-      margin-top: 15px;
-      background: #00ffd5;
-      border: none;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .dashboard {
-      display: none;
-      padding: 30px;
-    }
-    .container {
-      display: flex;
-      justify-content: space-between;
-    }
-    .section {
-      background: #1a1a1a;
-      padding: 20px;
-      border-radius: 10px;
-      width: 48%;
-      box-shadow: 0 0 10px rgba(0,255,213,0.1);
-    }
-    .section h2 {
       color: #00ffd5;
-      margin-bottom: 20px;
     }
-    .section ul {
+    ul {
       list-style: none;
       padding: 0;
+      max-width: 700px;
+      margin: auto;
     }
-    .section li {
+    li {
+      background: #1c1c1c;
       margin-bottom: 10px;
-      background: #222;
-      padding: 10px;
+      padding: 15px;
       border-radius: 6px;
+      position: relative;
+    }
+    button {
+      position: absolute;
+      left: 10px;
+      top: 10px;
+      background: #ff4444;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 5px;
+      cursor: pointer;
     }
   </style>
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 </head>
 <body>
-  <div class="login-screen" id="loginScreen">
-    <div class="login-box">
-      <h2>دخول المشرف</h2>
-      <input type="email" id="adminEmail" placeholder="الإيميل الإداري" />
-      <input type="password" id="adminCode" placeholder="كود الدخول" />
-      <br />
-      <button onclick="verifyAccess()">دخول</button>
-    </div>
-  </div>
-
-  <div class="dashboard" id="adminPanel">
-    <h1 style="text-align:center;">📊 لوحة تحكم XFaction</h1>
-    <div class="container">
-      <div class="section" style="order: 2;">
-        <h2>📋 الطلبات</h2>
-        <ul id="orderList"></ul>
-      </div>
-      <div class="section" style="order: 1;">
-        <h2>👥 الزوار</h2>
-        <ul id="visitorList"></ul>
-      </div>
-    </div>
-  </div>
+  <h1>👥 قائمة الزوار (Firestore)</h1>
+  <ul id="visitorList">جاري التحميل...</ul>
 
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyBlQRe187CdxcxVKfA99-v1oQtd9il6E4U",
       authDomain: "projectazo-49c65.firebaseapp.com",
-      projectId: "projectazo-49c65",
-      storageBucket: "projectazo-49c65.appspot.com",
-      messagingSenderId: "369654725402",
-      appId: "1:369654725402:web:9a36ae60f4df3441074aa3",
-      measurementId: "G-9JNW5E0XG3"
+      projectId: "projectazo-49c65"
     };
-
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    const ADMIN_EMAIL = "admin@xfaction.com";
-    const ADMIN_CODE = "12341234";
-
-    function verifyAccess() {
-      const email = document.getElementById("adminEmail").value;
-      const code = document.getElementById("adminCode").value;
-
-      if (email === ADMIN_EMAIL && code === ADMIN_CODE) {
-        document.getElementById("loginScreen").style.display = "none";
-        document.getElementById("adminPanel").style.display = "block";
-        loadVisitors();
-        loadOrders();
-      } else {
-        alert("بيانات الدخول غير صحيحة");
-      }
-    }
+    const list = document.getElementById("visitorList");
 
     function loadVisitors() {
-      const list = document.getElementById("visitorList");
       list.innerHTML = "";
       db.collection("visitors").get().then(snapshot => {
+        if (snapshot.empty) {
+          list.innerHTML = "<li>لا يوجد زوار بعد</li>";
+          return;
+        }
         snapshot.forEach(doc => {
           const v = doc.data();
           const li = document.createElement("li");
-          li.textContent = `👤 ${v.name} - ${v.phone}`;
+          li.innerHTML = `👤 <strong>${v.name}</strong><br>📞 ${v.phone}<br>📧 ${v.email}<br>🕒 ${v.time}
+            <button onclick="deleteVisitor('${doc.id}')">✖ حذف</button>`;
           list.appendChild(li);
         });
       });
     }
 
-    function loadOrders() {
-      const list = document.getElementById("orderList");
-      list.innerHTML = "";
-      db.collection("orders").get().then(snapshot => {
-        snapshot.forEach(doc => {
-          const o = doc.data();
-          const li = document.createElement("li");
-          const itemsHtml = o.items.map(i => i.name + " - " + i.price + " ريال").join("<br>");
-          li.innerHTML = `<strong>${o.name}</strong><br>📱 ${o.phone}<br>🚞 ${itemsHtml}<br>📍 ${o.address}`;
-          list.appendChild(li);
-        });
-      });
+    function deleteVisitor(id) {
+      if (!confirm("هل أنت متأكد من حذف هذا الزائر؟")) return;
+      db.collection("visitors").doc(id).delete().then(loadVisitors);
     }
+
+    loadVisitors();
   </script>
 </body>
 </html>
