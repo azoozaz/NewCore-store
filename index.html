@@ -1,95 +1,380 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>XFaction Store</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
+    
+    :root {
+      --primary: #00ffd5;
+      --dark-bg: #0a1a20;
+      --medium-bg: #132b36;
+      --light-bg: #1f3a45;
+      --accent: #ff3e8a;
+      --text: #ffffff;
+      --text-secondary: #b4c9d4;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
     body {
       margin: 0;
-      font-family: sans-serif;
-      background: #1f3a45;
-      color: white;
+      font-family: 'Tajawal', sans-serif;
+      background: var(--medium-bg);
+      color: var(--text);
+      line-height: 1.6;
+      background-image: 
+        linear-gradient(45deg, rgba(0, 255, 213, 0.03) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(0, 255, 213, 0.03) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, rgba(0, 255, 213, 0.03) 75%),
+        linear-gradient(-45deg, transparent 75%, rgba(0, 255, 213, 0.03) 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
     }
+    
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
     header {
-      background: #0e1a1f;
-      padding: 15px 30px;
+      background: var(--dark-bg);
+      padding: 15px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .header-content {
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-    header .nav a {
-      color: white;
+    
+    .logo {
+      display: flex;
+      align-items: center;
+    }
+    
+    .logo-text {
+      font-weight: 700;
+      font-size: 1.8rem;
+      background: linear-gradient(90deg, var(--primary), #a0ffee);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-right: 10px;
+    }
+    
+    .nav {
+      display: flex;
+      align-items: center;
+    }
+    
+    .nav a {
+      color: var(--text);
       text-decoration: none;
-      margin-left: 20px;
-      font-weight: bold;
+      margin-left: 25px;
+      font-weight: 500;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      position: relative;
+      padding: 5px 0;
     }
-    .welcome {
-      text-align: center;
-      margin-top: 100px;
+    
+    .nav a:hover {
+      color: var(--primary);
     }
-    .welcome h1 {
-      font-size: 2.2em;
+    
+    .nav a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: 0;
+      left: 0;
+      background-color: var(--primary);
+      transition: width 0.3s ease;
     }
+    
+    .nav a:hover::after {
+      width: 100%;
+    }
+    
+    .user-panel {
+      display: flex;
+      align-items: center;
+    }
+    
     .user-info {
-      margin-top: 20px;
-      font-size: 1.1em;
-      color: #00ffd5;
+      margin-left: 15px;
+      font-size: 0.95rem;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
     }
+    
+    .user-info::before {
+      content: "👤";
+      margin-left: 5px;
+    }
+    
     .logout-btn {
-      background: #ff4444;
+      background: linear-gradient(135deg, var(--accent), #ff6b6b);
       color: white;
       border: none;
-      padding: 6px 14px;
-      border-radius: 6px;
+      padding: 8px 16px;
+      border-radius: 50px;
       cursor: pointer;
       font-weight: bold;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 10px rgba(255, 62, 138, 0.3);
     }
+    
+    .logout-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(255, 62, 138, 0.4);
+    }
+    
+    .hero {
+      padding: 100px 0 60px;
+      text-align: center;
+      background: linear-gradient(180deg, var(--medium-bg), var(--light-bg));
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 30% 30%, rgba(0, 255, 213, 0.1), transparent 70%);
+    }
+    
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    
+    .hero h1 span {
+      color: var(--primary);
+      text-shadow: 0 0 20px rgba(0, 255, 213, 0.3);
+    }
+    
+    .hero p {
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto 40px;
+    }
+    
+    .cta-button {
+      background: linear-gradient(45deg, var(--primary), #00d1b2);
+      color: var(--dark-bg);
+      font-weight: 700;
+      padding: 12px 30px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-size: 1.1rem;
+      display: inline-block;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 5px 20px rgba(0, 255, 213, 0.3);
+    }
+    
+    .cta-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 255, 213, 0.5);
+    }
+    
+    .cta-button:active {
+      transform: translateY(1px);
+    }
+    
+    .review-section {
+      margin: 60px auto;
+      max-width: 600px;
+      background: var(--dark-bg);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .review-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+    }
+    
+    .review-section h3 {
+      color: var(--primary);
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+      font-weight: 500;
+    }
+    
+    #starRating {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+    }
+    
+    #starRating span {
+      font-size: 40px;
+      color: #4a5b63;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin: 0 5px;
+    }
+    
+    #starRating span:hover,
+    #starRating span.hovered {
+      color: gold;
+      transform: scale(1.1);
+    }
+    
+    #ratingStatus {
+      text-align: center;
+      margin-top: 15px;
+      color: var(--primary);
+      font-weight: 500;
+      min-height: 30px;
+    }
+    
+    #ratingsList {
+      margin-top: 30px;
+      color: var(--text-secondary);
+      background: rgba(19, 38, 46, 0.5);
+      padding: 15px 25px;
+      border-radius: 10px;
+    }
+    
+    #ratingsList ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    
+    #ratingsList li {
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(180, 201, 212, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    #ratingsList li:last-child {
+      border-bottom: none;
+    }
+    
     .form-overlay {
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
-      backdrop-filter: blur(6px);
-      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(8px);
+      background: rgba(10, 26, 32, 0.85);
       display: none;
       justify-content: center;
       align-items: center;
       z-index: 999;
     }
+    
     .form-container {
-      background: #13262e;
-      padding: 25px;
-      border-radius: 10px;
+      background: var(--dark-bg);
+      padding: 40px;
+      border-radius: 15px;
       width: 90%;
-      max-width: 400px;
+      max-width: 450px;
+      position: relative;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(0, 255, 213, 0.1);
     }
+    
+    .form-container h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: var(--primary);
+      font-size: 1.8rem;
+    }
+    
+    .form-container .input-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+    
     .form-container input {
       width: 100%;
-      padding: 10px;
-      margin-bottom: 15px;
-      font-size: 1em;
-      border-radius: 5px;
-      border: none;
+      padding: 12px 15px;
+      margin-bottom: 5px;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+      transition: all 0.3s ease;
+      font-family: 'Tajawal', sans-serif;
     }
+    
+    .form-container input:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(0, 255, 213, 0.1);
+    }
+    
+    .form-container input::placeholder {
+      color: rgba(255, 255, 255, 0.3);
+    }
+    
     .form-container button {
       width: 100%;
-      padding: 10px;
-      background: #00ffd5;
+      padding: 12px;
+      background: linear-gradient(45deg, var(--primary), #00d9e9);
       border: none;
-      border-radius: 5px;
-      font-size: 1em;
+      border-radius: 8px;
+      font-size: 1.1rem;
       font-weight: bold;
       cursor: pointer;
+      color: var(--dark-bg);
+      margin-top: 15px;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0, 255, 213, 0.2);
+      font-family: 'Tajawal', sans-serif;
     }
+    
+    .form-container button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 255, 213, 0.3);
+    }
+    
     #overlay {
       display: none;
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      background: rgba(0,0,0,0.9);
-      color: #00ffd5;
+      background: rgba(10, 26, 32, 0.97);
+      color: var(--primary);
       font-size: 1.6em;
       display: flex;
       align-items: center;
@@ -97,99 +382,322 @@
       z-index: 10000;
       flex-direction: column;
     }
-    #starRating span {
-  font-size: 28px;
-  color: gray;
-  cursor: pointer;
-  transition: 0.2s;
-}
-#starRating span:hover,
-#starRating span.hovered {
-  color: gold;
-}
-
+    
+    #overlay h2 {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    #overlay p {
+      color: var(--text-secondary);
+      font-size: 16px;
+    }
+    
+    .loader {
+      margin-top: 30px;
+      width: 48px;
+      height: 48px;
+      border: 5px solid var(--text-secondary);
+      border-bottom-color: var(--primary);
+      border-radius: 50%;
+      display: inline-block;
+      box-sizing: border-box;
+      animation: rotation 1s linear infinite;
+    }
+    
+    @keyframes rotation {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+    
+    .features {
+      padding: 60px 0;
+      background: var(--light-bg);
+    }
+    
+    .features-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+    }
+    
+    .feature-card {
+      background: var(--medium-bg);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    }
+    
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), transparent);
+    }
+    
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      color: var(--primary);
+    }
+    
+    .feature-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: var(--text);
+    }
+    
+    .feature-description {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+    
+    footer {
+      background: var(--dark-bg);
+      padding: 40px 0 20px;
+      text-align: center;
+    }
+    
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 30px;
+    }
+    
+    .footer-links a {
+      color: var(--text-secondary);
+      margin: 0 15px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.3s ease;
+    }
+    
+    .footer-links a:hover {
+      color: var(--primary);
+    }
+    
+    .copyright {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      opacity: 0.7;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+      }
+      
+      .logo {
+        margin-bottom: 15px;
+      }
+      
+      .nav {
+        margin-bottom: 15px;
+      }
+      
+      .nav a {
+        margin: 0 10px;
+        font-size: 0.9rem;
+      }
+      
+      .hero h1 {
+        font-size: 2.2rem;
+      }
+      
+      .hero p {
+        font-size: 1rem;
+      }
+      
+      .review-section {
+        padding: 20px;
+      }
+      
+      #starRating span {
+        font-size: 30px;
+      }
+    }
   </style>
 </head>
 <body onload="checkUser()">
-  
-
-
-    <div id="overlay" style="display:none;">
-        <h2 style="margin-bottom: 10px;">✨ شرفتنا بزيارتك للموقع</h2>
-    <p style="color: #aaa; font-size: 14px;">يتم تحويلك لتسجيل الدخول...</p>
-    </div>
+  <div id="overlay" style="display:none;">
+    <h2>✨ شرفتنا بزيارتك للموقع</h2>
+    <p>يتم تحويلك لتسجيل الدخول...</p>
+    <span class="loader"></span>
+  </div>
 
   <header>
-    <div class="nav">
-      <a href="index.html">الرئيسية</a>
-      <a href="products.html">المنتجات</a>
-      <a href="cart.html">السلة</a>
-      <a href="admin.html">لوحة التحكم</a>
-    </div>
-    <div>
-      <span id="userName" class="user-info"></span>
-      <button onclick="logout()" class="logout-btn" style="display:none;" id="logoutBtn">تسجيل خروج</button>
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <div class="logo-text">XFaction</div>
+        </div>
+        <div class="nav">
+          <a href="index.html">الرئيسية</a>
+          <a href="products.html">المنتجات</a>
+          <a href="cart.html">السلة</a>
+          <a href="admin.html">لوحة التحكم</a>
+        </div>
+        <div class="user-panel">
+          <span id="userName" class="user-info"></span>
+          <button onclick="logout()" class="logout-btn" style="display:none;" id="logoutBtn">تسجيل خروج</button>
+        </div>
+      </div>
     </div>
   </header>
 
   <div class="form-overlay" id="formOverlay">
     <div class="form-container" id="regForm">
       <h2>تسجيل الدخول</h2>
-      <input type="text" id="name" placeholder="الاسم" />
-      <input type="email" id="email" placeholder="الإيميل" />
-      <input type="tel" id="phone" placeholder="رقم الجوال" />
+      <div class="input-group">
+        <input type="text" id="name" placeholder="الاسم" />
+      </div>
+      <div class="input-group">
+        <input type="email" id="email" placeholder="البريد الإلكتروني" />
+      </div>
+      <div class="input-group">
+        <input type="tel" id="phone" placeholder="رقم الجوال" />
+      </div>
       <button onclick="registerUser()">دخول</button>
     </div>
   </div>
 
-  <div class="welcome" id="welcomeText" style="display:none;">
- 
-
-    <h1>مرحبًا بك في <span style="color:#00ffd5;">XFaction</span></h1>
-    <p>شركة إلكترونية تقدم لك منتجات مميزة بجودة عالية وسهولة طلب.</p>
-       <div class="review-section" style="margin: 60px auto; max-width: 500px; background: #13262e; padding: 20px; border-radius: 10px;">
-  <h3 style="color:#00ffd5;">قيّم المتجر:</h3>
-  <div id="starRating">
-    <span onclick="rateStore(1)">★</span>
-    <span onclick="rateStore(2)">★</span>
-    <span onclick="rateStore(3)">★</span>
-    <span onclick="rateStore(4)">★</span>
-    <span onclick="rateStore(5)">★</span>
+  <div class="hero" id="welcomeText" style="display:none;">
+    <div class="container">
+      <h1>مرحبًا بك في <span>XFaction</span></h1>
+      <p>المتجر الإلكتروني الأمثل لتجربة تسوق مميزة - منتجات عالية الجودة بأسعار منافسة وتوصيل سريع</p>
+      <a href="products.html" class="cta-button">تصفح منتجاتنا</a>
+    </div>
   </div>
-  <p style="margin-top:15px;" id="ratingStatus"></p>
-  <div id="ratingsList" style="margin-top:20px; color:#ccc;"></div>
   
-</div>
+  <section class="features">
+    <div class="container">
+      <div class="features-container">
+        <div class="feature-card">
+          <div class="feature-icon">🚚</div>
+          <h3 class="feature-title">توصيل سريع</h3>
+          <p class="feature-description">نضمن وصول منتجاتك بأسرع وقت وبأمان تام إلى باب منزلك</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">💯</div>
+          <h3 class="feature-title">جودة عالية</h3>
+          <p class="feature-description">جميع منتجاتنا مختارة بعناية ومضمونة الجودة لتلبي توقعاتك</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔒</div>
+          <h3 class="feature-title">دفع آمن</h3>
+          <p class="feature-description">طرق دفع متعددة ومؤمنة بالكامل لتسوق آمن ومريح</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="review-section" id="reviewSection">
+    <div class="container">
+      <h3>قيّم تجربتك معنا</h3>
+      <div id="starRating">
+        <span onclick="rateStore(1)">★</span>
+        <span onclick="rateStore(2)">★</span>
+        <span onclick="rateStore(3)">★</span>
+        <span onclick="rateStore(4)">★</span>
+        <span onclick="rateStore(5)">★</span>
+      </div>
+      <p id="ratingStatus"></p>
+      <div id="ratingsList"></div>
+    </div>
   </div>
+
+  <footer>
+    <div class="container">
+      <div class="footer-links">
+        <a href="#">من نحن</a>
+        <a href="#">سياسة الخصوصية</a>
+        <a href="#">الشروط والأحكام</a>
+        <a href="#">تواصل معنا</a>
+      </div>
+      <p class="copyright">جميع الحقوق محفوظة © XFaction Store 2025</p>
+    </div>
+  </footer>
 
   <script>
-      function rateStore(stars) {
-    const user = JSON.parse(localStorage.getItem("visitor"));
-    if (!user) return alert("سجّل دخولك أولاً");
-
-    const reviews = JSON.parse(localStorage.getItem("reviews") || "[]");
-    const found = reviews.find(r => r.name === user.name);
-    if (found) return alert("سبق وقيّمت المتجر.");
-
-    reviews.push({ name: user.name, stars });
-    localStorage.setItem("reviews", JSON.stringify(reviews));
-    document.getElementById("ratingStatus").innerText = "شكرًا لتقييمك!";
-    showRatings();
-  }
-
-  function showRatings() {
-    const reviews = JSON.parse(localStorage.getItem("reviews") || "[]");
-    if (!reviews.length) return;
-
-    let html = "<strong>الأشخاص الذين قاموا بالتقييم:</strong><ul>";
-    reviews.forEach(r => {
-      html += `<li>${r.name} - ${'⭐'.repeat(r.stars)}</li>`;
+    // تحسين مؤثرات النجوم للتقييم
+    const stars = document.querySelectorAll('#starRating span');
+    stars.forEach((star, index) => {
+      star.addEventListener('mouseover', () => {
+        for (let i = 0; i <= index; i++) {
+          stars[i].classList.add('hovered');
+        }
+      });
+      
+      star.addEventListener('mouseout', () => {
+        stars.forEach(s => s.classList.remove('hovered'));
+      });
     });
-    html += "</ul>";
-    document.getElementById("ratingsList").innerHTML = html;
-  }
+  
+    function rateStore(stars) {
+      const user = JSON.parse(localStorage.getItem("visitor"));
+      if (!user) {
+        document.getElementById("formOverlay").style.display = "flex";
+        return;
+      }
 
-  showRatings();
+      const reviews = JSON.parse(localStorage.getItem("reviews") || "[]");
+      const found = reviews.find(r => r.name === user.name);
+      
+      if (found) {
+        document.getElementById("ratingStatus").innerText = "لقد قمت بالتقييم مسبقاً!";
+        setTimeout(() => {
+          document.getElementById("ratingStatus").innerText = "";
+        }, 3000);
+        return;
+      }
+
+      reviews.push({ name: user.name, stars, date: new Date().toLocaleDateString('ar') });
+      localStorage.setItem("reviews", JSON.stringify(reviews));
+      document.getElementById("ratingStatus").innerText = "شكرًا لتقييمك! نقدر رأيك.";
+      
+      // إظهار النجوم المختارة
+      stars.forEach((s, i) => {
+        if (i < stars) s.classList.add('hovered');
+        else s.classList.remove('hovered');
+      });
+      
+      showRatings();
+    }
+
+    function showRatings() {
+      const reviews = JSON.parse(localStorage.getItem("reviews") || "[]");
+      if (!reviews.length) return;
+
+      let avgRating = reviews.reduce((sum, r) => sum + r.stars, 0) / reviews.length;
+      avgRating = Math.round(avgRating * 10) / 10;
+
+      let html = `<strong>متوسط التقييم: ${avgRating} ⭐ (${reviews.length} تقييم)</strong><ul>`;
+      reviews.slice(0, 5).forEach(r => {
+        html += `<li><span>${r.name}</span><span>${'⭐'.repeat(r.stars)}</span></li>`;
+      });
+      html += "</ul>";
+      document.getElementById("ratingsList").innerHTML = html;
+    }
+
     function checkUser() {
       const user = JSON.parse(localStorage.getItem("visitor"));
       if (!user) {
@@ -198,36 +706,72 @@
         document.getElementById("welcomeText").style.display = "block";
         document.getElementById("userName").innerText = user.name;
         document.getElementById("logoutBtn").style.display = "inline-block";
+        showRatings();
       }
     }
-function saveVisitor(visitor) {
-  const visitors = JSON.parse(localStorage.getItem("visitors") || "[]");
-  visitors.push(visitor);
-  localStorage.setItem("visitors", JSON.stringify(visitors));
-}
-function registerUser() {
-  const name = document.getElementById("name").value;
-  const email = document.getElementById("email").value;
-  const phone = document.getElementById("phone").value;
-  if (!name || !email || !phone) return alert("املأ جميع الحقول");
 
-  const visitor = { name, email, phone, time: new Date().toLocaleString() };
-  localStorage.setItem("visitor", JSON.stringify(visitor));
+    function saveVisitor(visitor) {
+      const visitors = JSON.parse(localStorage.getItem("visitors") || "[]");
+      visitors.push(visitor);
+      localStorage.setItem("visitors", JSON.stringify(visitors));
+    }
 
-  // نحفظ الزائر في القائمة العامة
-  const visitors = JSON.parse(localStorage.getItem("visitors") || "[]");
-  visitors.push(visitor);
-  localStorage.setItem("visitors", JSON.stringify(visitors));
+    function registerUser() {
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const phone = document.getElementById("phone").value;
+      
+      if (!name || !email || !phone) {
+        alert("الرجاء ملء جميع الحقول المطلوبة");
+        return;
+      }
+      
+      if (!validateEmail(email)) {
+        alert("الرجاء إدخال بريد إلكتروني صحيح");
+        return;
+      }
+      
+      if (!validatePhone(phone)) {
+        alert("الرجاء إدخال رقم هاتف صحيح");
+        return;
+      }
 
-  location.reload();
-}
+      const visitor = { 
+        name, 
+        email, 
+        phone, 
+        time: new Date().toLocaleString('ar'),
+        id: Date.now()
+      };
+      
+      localStorage.setItem("visitor", JSON.stringify(visitor));
 
+      // حفظ الزائر في القائمة العامة
+      const visitors = JSON.parse(localStorage.getItem("visitors") || "[]");
+      visitors.push(visitor);
+      localStorage.setItem("visitors", JSON.stringify(visitors));
+
+      location.reload();
+    }
+
+    function validateEmail(email) {
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(email);
+    }
+
+    function validatePhone(phone) {
+      const re = /^[0-9]{9,15}$/;
+      return re.test(phone.replace(/\s+/g, '').replace(/[\+\-]/g, ''));
+    }
 
     function logout() {
       localStorage.removeItem("visitor");
       document.getElementById("overlay").style.display = "flex";
-      setTimeout(() => location.reload(), 10000);
+      setTimeout(() => location.reload(), 3000);
     }
+
+    // تحميل التقييمات عند بدء الصفحة
+    showRatings();
   </script>
 </body>
 </html>
