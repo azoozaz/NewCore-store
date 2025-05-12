@@ -1,217 +1,657 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>منتجات XFaction</title>
   <style>
-    body {
-      background-color: #0e0e0e;
-      color: white;
-      font-family: sans-serif;
-      margin: 0;
+    @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap');
+    
+    :root {
+      --primary: #00ffd5;
+      --primary-dark: #00cca8;
+      --bg-dark: #0a0a0a;
+      --bg-card: #141414;
+      --text-light: #ffffff;
+      --text-muted: #a0a0a0;
+      --accent: #ff3366;
     }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 25% 15%, rgba(0, 255, 213, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 75% 85%, rgba(255, 51, 102, 0.05) 0%, transparent 40%);
+      color: var(--text-light);
+      font-family: 'Tajawal', sans-serif;
+      margin: 0;
+      line-height: 1.6;
+    }
+    
+    /* Header Styles */
     header {
-      background: #111;
-      padding: 15px 30px;
+      background: rgba(10, 10, 10, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 15px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+      border-bottom: 1px solid rgba(0, 255, 213, 0.1);
+    }
+    
+    .logo {
+      font-size: 24px;
+      font-weight: 900;
+      position: relative;
+      color: white;
+    }
+    
+    .logo::after {
+      content: '';
+      position: absolute;
+      width: 50%;
+      height: 3px;
+      background: var(--primary);
+      bottom: -5px;
+      left: 0;
+      border-radius: 2px;
+    }
+    
+    .nav {
+      display: flex;
+      gap: 5px;
+    }
+    
+    .nav a {
+      color: var(--text-light);
+      text-decoration: none;
+      margin-right: 20px;
+      font-weight: 700;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      position: relative;
+      padding: 8px 12px;
+      border-radius: 8px;
+    }
+    
+    .nav a:hover {
+      color: var(--primary);
+      background: rgba(0, 255, 213, 0.08);
+    }
+    
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      padding: 60px 20px;
+      background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/api/placeholder/1200/300') center/cover;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at center, rgba(0, 255, 213, 0.2), transparent);
+      pointer-events: none;
+    }
+    
+    .hero h1 {
+      font-size: 42px;
+      margin-bottom: 20px;
+      font-weight: 900;
+      color: white;
+      text-shadow: 0 0 15px rgba(0, 255, 213, 0.5);
+    }
+    
+    .hero p {
+      font-size: 18px;
+      max-width: 700px;
+      margin: 0 auto 30px;
+      color: var(--text-muted);
+    }
+    
+    /* Category Navigation */
+    .categories {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .category-btn {
+      background: var(--bg-card);
+      border: 1px solid rgba(0, 255, 213, 0.2);
+      color: var(--text-light);
+      padding: 10px 20px;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: bold;
+    }
+    
+    .category-btn:hover, .category-btn.active {
+      background: rgba(0, 255, 213, 0.15);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    
+    /* Product Grid */
+    .page-title {
+      text-align: center;
+      padding: 20px;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 20px 0;
+    }
+    
+    .grid-container {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 30px;
+      padding: 20px 0;
+    }
+    
+    .card {
+      background: var(--bg-card);
+      border-radius: 15px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+      border-color: rgba(0, 255, 213, 0.2);
+    }
+    
+    .card-tag {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: var(--accent);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      z-index: 2;
+    }
+    
+    .card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .card:hover img {
+      transform: scale(1.05);
+    }
+    
+    .card-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+    
+    .card-body h3 {
+      margin: 0 0 10px;
+      font-size: 20px;
+      color: var(--primary);
+      position: relative;
+    }
+    
+    .card-body p {
+      margin: 0 0 15px;
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      flex-grow: 1;
+    }
+    
+    .card-footer {
+      padding: 0 20px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-    header .nav a {
-      color: white;
-      text-decoration: none;
-      margin-left: 20px;
-      font-weight: bold;
-    }
-    .grid {
-      display: flex;
-      flex-wrap: wrap;
-      padding: 30px;
-      justify-content: center;
-      gap: 25px;
-    }
-    .card {
-      background: #1a1a1a;
-      border-radius: 10px;
-      width: 300px;
-      box-shadow: 0 0 10px rgba(0,255,213,0.1);
-      overflow: hidden;
-      transition: transform 0.2s;
-    }
-    .card:hover {
-      transform: scale(1.03);
-    }
-    .card img {
-      width: 100%;
-      height: 180px;
-      object-fit: cover;
-    }
-    .card-body {
-      padding: 15px;
-    }
-    .card-body h3 {
-      margin: 0 0 10px;
-      font-size: 17px;
-      color: #00ffd5;
-    }
-    .card-body p {
-      margin: 0 0 10px;
-      font-size: 14px;
-      color: #ccc;
-    }
+    
     .price {
-      font-size: 16px;
-      color: #ff4444;
+      font-size: 20px;
+      color: var(--text-light);
       font-weight: bold;
     }
+    
+    .price span {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+    
     .cart-btn {
-      background: #00ffd5;
+      background: var(--primary);
       border: none;
       color: black;
       font-weight: bold;
-      width: 100%;
-      padding: 10px;
+      padding: 10px 20px;
       cursor: pointer;
-      border-radius: 0 0 10px 10px;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Tajawal', sans-serif;
+    }
+    
+    .cart-btn:hover {
+      background: var(--primary-dark);
+      transform: scale(1.05);
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      header {
+        padding: 15px 20px;
+        flex-direction: column;
+        gap: 15px;
+      }
+      
+      .hero h1 {
+        font-size: 32px;
+      }
+      
+      .grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 20px;
+      }
+    }
+    
+    /* Toast notification */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 15px 25px;
+      border-radius: 10px;
+      border-right: 4px solid var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+      transform: translateX(200%);
+      transition: transform 0.3s ease;
+    }
+    
+    .toast.show {
+      transform: translateX(0);
+    }
+    
+    /* Loading animation */
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 300px;
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(0, 255, 213, 0.1);
+      border-radius: 50%;
+      border-top: 4px solid var(--primary);
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    /* Footer */
+    footer {
+      background: rgba(10, 10, 10, 0.95);
+      padding: 40px 20px;
+      text-align: center;
+      margin-top: 50px;
+      border-top: 1px solid rgba(0, 255, 213, 0.1);
+    }
+    
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 30px;
+      text-align: right;
+    }
+    
+    .footer-section h4 {
+      color: var(--primary);
+      margin-bottom: 20px;
+      font-size: 18px;
+    }
+    
+    .footer-section ul {
+      list-style: none;
+    }
+    
+    .footer-section ul li {
+      margin-bottom: 10px;
+    }
+    
+    .footer-section ul li a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    
+    .footer-section ul li a:hover {
+      color: var(--primary);
+    }
+    
+    .copyright {
+      margin-top: 40px;
+      color: var(--text-muted);
+      font-size: 14px;
     }
   </style>
 </head>
+
 <body>
+  <!-- Header Section -->
   <header>
+    <div class="logo">XFaction 🛒</div>
     <div class="nav">
       <a href="index.html">الرئيسية</a>
       <a href="products.html">المنتجات</a>
       <a href="cart.html">السلة</a>
     </div>
-    <div class="logo">XFaction 🛒</div>
   </header>
 
-  <section class="grid" id="productGrid">جاري التحميل...</section>
+  <!-- Hero Section -->
+  <section class="hero">
+    <h1>أفضل منتجات التكنولوجيا</h1>
+    <p>استمتع بتجربة تسوق مميزة مع XFaction - جودة عالية بأسعار منافسة</p>
+  </section>
+
+  <!-- Category Navigation -->
+  <div class="categories">
+    <button class="category-btn active">الكل</button>
+    <button class="category-btn">سماعات</button>
+    <button class="category-btn">شواحن</button>
+    <button class="category-btn">لوحات مفاتيح</button>
+    <button class="category-btn">شاشات</button>
+    <button class="category-btn">ماوس</button>
+  </div>
+
+  <!-- Products Section -->
+  <div class="grid-container">
+    <h2 class="page-title">منتجاتنا المميزة</h2>
+    <section class="grid" id="productGrid">
+      <div class="loading">
+        <div class="loading-spinner"></div>
+        <p>جاري تحميل المنتجات...</p>
+      </div>
+    </section>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast">
+    <span>✅</span>
+    <span id="toastMessage">تمت إضافة المنتج إلى السلة</span>
+  </div>
+
+  <!-- Footer Section -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>روابط سريعة</h4>
+        <ul>
+          <li><a href="#">الرئيسية</a></li>
+          <li><a href="#">المنتجات</a></li>
+          <li><a href="#">العروض الخاصة</a></li>
+          <li><a href="#">تواصل معنا</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4>خدمة العملاء</h4>
+        <ul>
+          <li><a href="#">سياسة الإرجاع</a></li>
+          <li><a href="#">الشحن والتوصيل</a></li>
+          <li><a href="#">الأسئلة الشائعة</a></li>
+          <li><a href="#">الضمان</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4>تواصل معنا</h4>
+        <ul>
+          <li><a href="#">info@xfaction.com</a></li>
+          <li><a href="#">+966 50 123 4567</a></li>
+          <li><a href="#">الرياض، المملكة العربية السعودية</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="copyright">
+      &copy; 2025 XFaction - جميع الحقوق محفوظة
+    </div>
+  </footer>
 
   <script>
     const sampleProducts = [
       {
-        name: "سماعة XF",
+        name: "سماعة XF Pro",
+        description: "سماعة احترافية بجودة صوت عالية وعزل للضوضاء",
         price: 120,
+        tag: "جديد",
+        category: "سماعات",
         image: "https://cdn.discordapp.com/attachments/1042379114885169163/1371463311065088070/NC-Banner-background23.png?ex=68233a3d&is=6821e8bd&hm=df50a234dd8ae64b095555a3d7982f7fae30052e88f7d2fbb6fe13ff94c28499&"
       },
       {
-        name: "شاحن سريع",
+        name: "شاحن سريع XF 65W",
+        description: "شاحن سريع متوافق مع جميع الأجهزة مع تقنية الشحن الذكي",
         price: 80,
+        tag: "الأكثر مبيعاً",
+        category: "شواحن",
         image: "https://cdn.discordapp.com/attachments/1042379114885169163/1371463311065088070/NC-Banner-background23.png?ex=68233a3d&is=6821e8bd&hm=df50a234dd8ae64b095555a3d7982f7fae30052e88f7d2fbb6fe13ff94c28499&"
       },
       {
-        name: "كيبورد ميكانيكي",
+        name: "كيبورد ميكانيكي XF Gaming",
+        description: "لوحة مفاتيح ميكانيكية مع إضاءة RGB قابلة للتخصيص",
         price: 220,
+        tag: "",
+        category: "لوحات مفاتيح",
         image: "https://cdn.discordapp.com/attachments/1042379114885169163/1371463311065088070/NC-Banner-background23.png?ex=68233a3d&is=6821e8bd&hm=df50a234dd8ae64b095555a3d7982f7fae30052e88f7d2fbb6fe13ff94c28499&"
       },
       {
-        name: "ماوس XF Gamer",
+        name: "ماوس XF Gamer Pro",
+        description: "ماوس احترافي للألعاب مع دقة عالية وأزرار قابلة للبرمجة",
         price: 150,
+        tag: "خصم 15%",
+        category: "ماوس",
         image: "https://cdn.discordapp.com/attachments/1042379114885169163/1371463311065088070/NC-Banner-background23.png?ex=68233a3d&is=6821e8bd&hm=df50a234dd8ae64b095555a3d7982f7fae30052e88f7d2fbb6fe13ff94c28499&"
       },
       {
-        name: "شاشة 24 بوصة",
+        name: "شاشة XF 24 بوصة 144Hz",
+        description: "شاشة ألعاب بمعدل تحديث 144Hz ودقة Full HD",
         price: 580,
+        tag: "",
+        category: "شاشات",
         image: "https://cdn.discordapp.com/attachments/1042379114885169163/1371463311065088070/NC-Banner-background23.png?ex=68233a3d&is=6821e8bd&hm=df50a234dd8ae64b095555a3d7982f7fae30052e88f7d2fbb6fe13ff94c28499&"
       },
-          {
-        name: "شاشة 24 بوصة",
-        price: 580,
+      {
+        name: "سماعة XF AirPods",
+        description: "سماعات لاسلكية مع جودة صوت استثنائية وعمر بطارية طويل",
+        price: 190,
+        tag: "جديد",
+        category: "سماعات",
         image: "https://cdn.discordapp.com/attachments/1042379114885169163/1371463311065088070/NC-Banner-background23.png?ex=68233a3d&is=6821e8bd&hm=df50a234dd8ae64b095555a3d7982f7fae30052e88f7d2fbb6fe13ff94c28499&"
       },
-          {
-        name: "شاشة 24 بوصة",
-        price: 580,
+      {
+        name: "شاحن لاسلكي XF",
+        description: "شاحن لاسلكي سريع متوافق مع جميع الأجهزة الحديثة",
+        price: 120,
+        tag: "",
+        category: "شواحن",
         image: "https://cdn.discordapp.com/attachments/1042379114885169163/1371463311065088070/NC-Banner-background23.png?ex=68233a3d&is=6821e8bd&hm=df50a234dd8ae64b095555a3d7982f7fae30052e88f7d2fbb6fe13ff94c28499&"
       },
-          {
-        name: "شاشة 24 بوصة",
-        price: 580,
+      {
+        name: "كيبورد XF Slim",
+        description: "لوحة مفاتيح نحيفة ومريحة مع تصميم أنيق",
+        price: 140,
+        tag: "",
+        category: "لوحات مفاتيح",
         image: "https://cdn.discordapp.com/attachments/1042379114885169163/1371463311065088070/NC-Banner-background23.png?ex=68233a3d&is=6821e8bd&hm=df50a234dd8ae64b095555a3d7982f7fae30052e88f7d2fbb6fe13ff94c28499&"
       },
-          {
-        name: "شاشة 24 بوصة",
-        price: 580,
+      {
+        name: "ماوس XF Wireless",
+        description: "ماوس لاسلكي خفيف الوزن مع دقة عالية وبطارية طويلة الأمد",
+        price: 90,
+        tag: "",
+        category: "ماوس",
         image: "https://cdn.discordapp.com/attachments/1042379114885169163/1371463311065088070/NC-Banner-background23.png?ex=68233a3d&is=6821e8bd&hm=df50a234dd8ae64b095555a3d7982f7fae30052e88f7d2fbb6fe13ff94c28499&"
       },
-          {
-        name: "شاشة 24 بوصة",
-        price: 580,
+      {
+        name: "شاشة XF 27 بوصة 4K",
+        description: "شاشة بدقة 4K مع ألوان دقيقة مثالية للتصميم والألعاب",
+        price: 950,
+        tag: "فاخر",
+        category: "شاشات",
         image: "https://cdn.discordapp.com/attachments/1042379114885169163/1371463311065088070/NC-Banner-background23.png?ex=68233a3d&is=6821e8bd&hm=df50a234dd8ae64b095555a3d7982f7fae30052e88f7d2fbb6fe13ff94c28499&"
       },
-          {
-        name: "شاشة 24 بوصة",
-        price: 580,
+      {
+        name: "سماعة XF Gaming",
+        description: "سماعة مخصصة للألعاب مع ميكروفون عالي الجودة",
+        price: 250,
+        tag: "",
+        category: "سماعات",
         image: "https://cdn.discordapp.com/attachments/1042379114885169163/1371463311065088070/NC-Banner-background23.png?ex=68233a3d&is=6821e8bd&hm=df50a234dd8ae64b095555a3d7982f7fae30052e88f7d2fbb6fe13ff94c28499&"
       },
-          {
-        name: "شاشة 24 بوصة",
-        price: 580,
-        image: "https://cdn.discordapp.com/attachments/1042379114885169163/1371463311065088070/NC-Banner-background23.png?ex=68233a3d&is=6821e8bd&hm=df50a234dd8ae64b095555a3d7982f7fae30052e88f7d2fbb6fe13ff94c28499&"
-      },
-          {
-        name: "شاشة 24 بوصة",
-        price: 580,
-        image: "https://cdn.discordapp.com/attachments/1042379114885169163/1371463311065088070/NC-Banner-background23.png?ex=68233a3d&is=6821e8bd&hm=df50a234dd8ae64b095555a3d7982f7fae30052e88f7d2fbb6fe13ff94c28499&"
-      },
-          {
-        name: "شاشة 24 بوصة",
-        price: 580,
-        image: "https://cdn.discordapp.com/attachments/1042379114885169163/1371463311065088070/NC-Banner-background23.png?ex=68233a3d&is=6821e8bd&hm=df50a234dd8ae64b095555a3d7982f7fae30052e88f7d2fbb6fe13ff94c28499&"
-      },
-          {
-        name: "شاشة 24 بوصة",
-        price: 580,
-        image: "https://cdn.discordapp.com/attachments/1042379114885169163/1371463311065088070/NC-Banner-background23.png?ex=68233a3d&is=6821e8bd&hm=df50a234dd8ae64b095555a3d7982f7fae30052e88f7d2fbb6fe13ff94c28499&"
-      },
-          {
-        name: "شاشة 24 بوصة",
-        price: 580,
-        image: "https://cdn.discordapp.com/attachments/1042379114885169163/1371463311065088070/NC-Banner-background23.png?ex=68233a3d&is=6821e8bd&hm=df50a234dd8ae64b095555a3d7982f7fae30052e88f7d2fbb6fe13ff94c28499&"
-      },
-          {
-        name: "شاشة 24 بوصة",
-        price: 580,
-        image: "https://cdn.discordapp.com/attachments/1042379114885169163/1371463311065088070/NC-Banner-background23.png?ex=68233a3d&is=6821e8bd&hm=df50a234dd8ae64b095555a3d7982f7fae30052e88f7d2fbb6fe13ff94c28499&"
-      },
-          {
-        name: "شاشة 24 بوصة",
-        price: 580,
+      {
+        name: "كيبورد XF Wireless",
+        description: "لوحة مفاتيح لاسلكية مع تصميم مدمج وعمر بطارية طويل",
+        price: 180,
+        tag: "",
+        category: "لوحات مفاتيح",
         image: "https://cdn.discordapp.com/attachments/1042379114885169163/1371463311065088070/NC-Banner-background23.png?ex=68233a3d&is=6821e8bd&hm=df50a234dd8ae64b095555a3d7982f7fae30052e88f7d2fbb6fe13ff94c28499&"
       }
-
     ];
 
-    function loadProducts() {
-      const container = document.getElementById('productGrid');
-      container.innerHTML = "";
-      sampleProducts.forEach(p => {
-        const div = document.createElement("div");
-        div.className = "card";
-        div.innerHTML = `
-          <img src="${p.image}" alt="${p.name}">
-          <div class="card-body">
-            <h3>${p.name}</h3>
-            <p>منتج رائع مقدم من XFaction</p>
-            <div class="price">${p.price} ريال</div>
-          </div>
-      <button class="cart-btn" onclick="addToCart('${p.name}', ${p.price}, '${p.image}')">🛒 أضف للسلة</button>
-
-        `;
-        container.appendChild(div);
-      });
+    // Show toast notification
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      const toastMessage = document.getElementById('toastMessage');
+      toastMessage.textContent = message;
+      toast.classList.add('show');
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
     }
 
-  function addToCart(name, price, image) {
-  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-  cart.push({ name, price, image });
-  localStorage.setItem("cart", JSON.stringify(cart));
-  alert(`${name} تمت إضافته للسلة`);
-}
+    // Add to cart function
+    function addToCart(name, price, image) {
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      cart.push({ name, price, image });
+      localStorage.setItem("cart", JSON.stringify(cart));
+      showToast(`تمت إضافة ${name} إلى السلة`);
+    }
 
+    // Filter products by category
+    function filterProducts(category) {
+      const filteredProducts = category === 'الكل' 
+        ? sampleProducts 
+        : sampleProducts.filter(p => p.category === category);
+      
+      loadProducts(filteredProducts);
+      
+      // Update active button
+      document.querySelectorAll('.category-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      event.target.classList.add('active');
+    }
 
+    // Add event listeners to category buttons
+    document.querySelectorAll('.category-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        filterProducts(this.textContent);
+      });
+    });
+
+    // Load products function
+    function loadProducts(products = sampleProducts) {
+      const container = document.getElementById('productGrid');
+      
+      // Simulate loading
+      setTimeout(() => {
+        container.innerHTML = "";
+        
+        products.forEach(p => {
+          const div = document.createElement("div");
+          div.className = "card";
+          
+          let tagHtml = '';
+          if (p.tag) {
+            tagHtml = `<div class="card-tag">${p.tag}</div>`;
+          }
+          
+          div.innerHTML = `
+            ${tagHtml}
+            <img src="${p.image}" alt="${p.name}">
+            <div class="card-body">
+              <h3>${p.name}</h3>
+              <p>${p.description || 'منتج رائع مقدم من XFaction'}</p>
+            </div>
+            <div class="card-footer">
+              <div class="price">${p.price} <span>ريال</span></div>
+              <button class="cart-btn" onclick="addToCart('${p.name}', ${p.price}, '${p.image}')">أضف للسلة 🛒</button>
+            </div>
+          `;
+          
+          container.appendChild(div);
+        });
+      }, 1000); // Simulate loading delay
+    }
+
+    // Initialize products
     loadProducts();
   </script>
 </body>
