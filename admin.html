@@ -4,13 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>لوحة تحكم الزوار</title>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
-    
     :root {
       --bg-primary: #0c1121;
       --bg-card: #141c36;
@@ -22,301 +19,86 @@
       --delete-hover: #ff1a56;
       --card-shadow: 0 4px 20px rgba(0, 229, 255, 0.1);
     }
-    
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       background: var(--bg-primary);
-      background-image: 
-        radial-gradient(circle at 10% 20%, rgba(115, 77, 255, 0.05) 0%, transparent 20%),
-        radial-gradient(circle at 90% 80%, rgba(0, 229, 255, 0.07) 0%, transparent 30%);
+      background-image: radial-gradient(circle at 10% 20%, rgba(115, 77, 255, 0.05) 0%, transparent 20%), radial-gradient(circle at 90% 80%, rgba(0, 229, 255, 0.07) 0%, transparent 30%);
       color: var(--text-primary);
       font-family: 'Cairo', sans-serif;
-      margin: 0;
-      padding: 0;
       min-height: 100vh;
     }
-    
-    .container {
-      width: 100%;
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 2rem 1.5rem;
-    }
-    
-    .header {
-      text-align: center;
-      margin-bottom: 3rem;
-      position: relative;
-    }
-    
+    .container { max-width: 900px; margin: auto; padding: 2rem 1.5rem; }
+    .header { text-align: center; margin-bottom: 3rem; }
     .header h1 {
-      font-size: 2.2rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
+      font-size: 2.2rem; font-weight: 700;
       background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      position: relative;
-      display: inline-block;
-      padding-bottom: 0.75rem;
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      position: relative; display: inline-block; padding-bottom: 0.75rem;
     }
-    
     .header h1::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 25%;
-      width: 50%;
-      height: 3px;
-      background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
-      border-radius: 3px;
+      content: ''; position: absolute; bottom: 0; left: 25%; width: 50%; height: 3px;
+      background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary)); border-radius: 3px;
     }
-    
-    .header p {
-      color: var(--text-secondary);
-      font-size: 1rem;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-    
-    .stats {
-      display: flex;
-      justify-content: center;
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-    }
-    
+    .header p { color: var(--text-secondary); font-size: 1rem; max-width: 600px; margin: auto; }
+    .stats { display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 2rem; flex-wrap: wrap; }
     .stat-card {
-      background: var(--bg-card);
-      border-radius: 12px;
-      padding: 1.25rem;
-      min-width: 180px;
-      flex: 1;
-      text-align: center;
-      box-shadow: var(--card-shadow);
+      background: var(--bg-card); border-radius: 12px; padding: 1.25rem; min-width: 180px;
+      text-align: center; box-shadow: var(--card-shadow);
       border: 1px solid rgba(0, 229, 255, 0.1);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-    
-    .stat-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 6px 25px rgba(0, 229, 255, 0.15);
-    }
-    
     .stat-card i {
       font-size: 1.8rem;
       background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      margin-bottom: 0.5rem;
+      -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 0.5rem;
     }
-    
-    .stat-card .stat-value {
-      font-size: 1.75rem;
-      font-weight: 700;
-      margin-bottom: 0.25rem;
-    }
-    
-    .stat-card .stat-label {
-      color: var(--text-secondary);
-      font-size: 0.85rem;
-    }
-    
-    .visitors-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    
+    .stat-card .stat-value { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.25rem; }
+    .stat-card .stat-label { color: var(--text-secondary); font-size: 0.85rem; }
+    .visitors-list { list-style: none; padding: 0; margin: 0; }
     .visitor-card {
-      background: var(--bg-card);
-      margin-bottom: 1rem;
-      padding: 1.5rem;
-      border-radius: 12px;
-      position: relative;
-      box-shadow: var(--card-shadow);
+      background: var(--bg-card); margin-bottom: 1rem; padding: 1.5rem;
+      border-radius: 12px; position: relative; box-shadow: var(--card-shadow);
       border: 1px solid rgba(0, 229, 255, 0.1);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      animation: fadeIn 0.5s ease;
     }
-    
-    .visitor-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 6px 25px rgba(0, 229, 255, 0.15);
-    }
-    
-    .visitor-header {
-      display: flex;
-      align-items: center;
-      margin-bottom: 0.75rem;
-    }
-    
+    .visitor-header { display: flex; align-items: center; margin-bottom: 0.75rem; }
     .visitor-avatar {
-      width: 45px;
-      height: 45px;
+      width: 45px; height: 45px;
       background: linear-gradient(45deg, var(--accent-primary), var(--accent-secondary));
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-left: 1rem;
-      font-size: 1.2rem;
-      color: white;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      margin-left: 1rem; font-size: 1.2rem; color: white;
     }
-    
-    .visitor-name {
-      font-size: 1.2rem;
-      font-weight: 600;
-    }
-    
-    .visitor-time {
-      color: var(--text-secondary);
-      font-size: 0.8rem;
-      margin-top: 0.25rem;
-    }
-    
+    .visitor-name { font-size: 1.2rem; font-weight: 600; }
+    .visitor-time { color: var(--text-secondary); font-size: 0.8rem; margin-top: 0.25rem; }
     .visitor-details {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      padding-right: 0.5rem;
+      display: flex; flex-wrap: wrap; gap: 1rem; padding-right: 0.5rem;
     }
-    
     .visitor-detail {
-      display: flex;
-      align-items: center;
-      margin-bottom: 0.5rem;
-      background: rgba(20, 28, 54, 0.7);
-      padding: 0.5rem 0.75rem;
-      border-radius: 8px;
-      min-width: 180px;
+      display: flex; align-items: center; margin-bottom: 0.5rem;
+      background: rgba(20, 28, 54, 0.7); padding: 0.5rem 0.75rem; border-radius: 8px; min-width: 180px;
     }
-    
-    .visitor-detail i {
-      margin-left: 0.5rem;
-      color: var(--accent-primary);
-      font-size: 0.9rem;
-    }
-    
+    .visitor-detail i { margin-left: 0.5rem; color: var(--accent-primary); font-size: 0.9rem; }
     .delete-btn {
-      position: absolute;
-      left: 1rem;
-      top: 1rem;
-      background: var(--delete-btn);
-      color: white;
-      border: none;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: 0 3px 10px rgba(255, 58, 110, 0.3);
+      position: absolute; left: 1rem; top: 1rem;
+      background: var(--delete-btn); color: white; border: none; width: 36px; height: 36px;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;
     }
-    
-    .delete-btn:hover {
-      background: var(--delete-hover);
-      transform: scale(1.05);
-    }
-    
-    .loading {
-      text-align: center;
-      padding: 2rem;
-      color: var(--text-secondary);
-      font-size: 1.1rem;
-    }
-    
-    .loading i {
-      margin-left: 0.5rem;
-      animation: spin 1s linear infinite;
-    }
-    
-    .empty-state {
-      text-align: center;
-      padding: 3rem 1rem;
-      color: var(--text-secondary);
-    }
-    
-    .empty-state i {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-      opacity: 0.7;
-    }
-    
-    .empty-state p {
-      font-size: 1.1rem;
-    }
-    
-    .footer {
-      text-align: center;
-      margin-top: 3rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid rgba(160, 174, 214, 0.1);
-      color: var(--text-secondary);
-      font-size: 0.9rem;
-    }
-    
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    @media (max-width: 768px) {
-      .container {
-        padding: 1.5rem 1rem;
-      }
-      
-      .header h1 {
-        font-size: 1.8rem;
-      }
-      
-      .stat-card {
-        min-width: 140px;
-      }
-      
-      .visitor-details {
-        flex-direction: column;
-      }
-      
-      .visitor-detail {
-        min-width: auto;
-      }
-    }
+    .footer { text-align: center; margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid rgba(160, 174, 214, 0.1); color: var(--text-secondary); font-size: 0.9rem; }
   </style>
 </head>
 <body>
   <div id="loginScreen" style="position:fixed;top:0;left:0;width:100%;height:100vh;background:#0c1121;display:flex;align-items:center;justify-content:center;z-index:9999;">
-  <div style="text-align:center;">
-    <h2 style="color:#fff;margin-bottom:1rem;">أدخل كود الدخول</h2>
-    <input id="adminCodeInput" type="password" placeholder="رمز الدخول" style="padding:10px 15px;border:none;border-radius:8px;outline:none;width:250px;margin-bottom:1rem;">
-    <br>
-    <button onclick="checkAdminCode()" style="padding:10px 20px;border:none;border-radius:8px;background:#00e5ff;color:#000;font-weight:bold;cursor:pointer;">دخول</button>
-    <p id="errorMsg" style="color:#ff3a6e;margin-top:1rem;display:none;">رمز خاطئ!</p>
+    <div style="text-align:center;">
+      <h2 style="color:#fff;margin-bottom:1rem;">أدخل كود الدخول</h2>
+      <input id="adminCodeInput" type="password" placeholder="رمز الدخول" style="padding:10px 15px;border:none;border-radius:8px;outline:none;width:250px;margin-bottom:1rem;"><br>
+      <button onclick="checkAdminCode()" style="padding:10px 20px;border:none;border-radius:8px;background:#00e5ff;color:#000;font-weight:bold;cursor:pointer;">دخول</button>
+      <p id="errorMsg" style="color:#ff3a6e;margin-top:1rem;display:none;">رمز خاطئ!</p>
+    </div>
   </div>
-</div>
-
   <div class="container">
-    <div class="header animate__animated animate__fadeIn">
+    <div class="header">
       <h1><i class="fas fa-users-viewfinder"></i> لوحة تحكم الزوار</h1>
       <p>إدارة بيانات الزوار والمتابعة بسهولة</p>
     </div>
-    
-    <div class="stats animate__animated animate__fadeInUp">
+    <div class="stats">
       <div class="stat-card">
         <i class="fas fa-users"></i>
         <div class="stat-value" id="totalVisitors">-</div>
@@ -333,27 +115,12 @@
         <div class="stat-label">آخر زيارة</div>
       </div>
     </div>
-    
-    <ul id="visitorList" class="visitors-list animate__animated animate__fadeIn">
-      <div class="loading">
-        <i class="fas fa-circle-notch"></i> جاري تحميل البيانات...
-      </div>
-    </ul>
-    
+    <ul id="visitorList" class="visitors-list"></ul>
     <div class="footer">
       <p>© 2025 لوحة تحكم الزوار | تم التطوير بواسطة فريق الشركة</p>
     </div>
   </div>
-
   <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyBlQRe187CdxcxVKfA99-v1oQtd9il6E4U",
-      authDomain: "projectazo-49c65.firebaseapp.com",
-      projectId: "projectazo-49c65"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
     const list = document.getElementById("visitorList");
     const totalVisitorsElement = document.getElementById("totalVisitors");
     const todayVisitorsElement = document.getElementById("todayVisitors");
@@ -363,187 +130,78 @@
       return name.split(' ').map(part => part.charAt(0)).join('').toUpperCase();
     }
 
-    function formatTime(timeString) {
-      if (!timeString) return "غير محدد";
-      
-      // تحويل التاريخ إذا كان بتنسيق Timestamp أو Date
-      let date;
-      if (timeString.toDate) { // في حالة كان Firestore Timestamp
-        date = timeString.toDate();
-      } else if (timeString instanceof Date) {
-        date = timeString;
-      } else {
-        try {
-          date = new Date(timeString);
-        } catch (e) {
-          return timeString; // إرجاع النص الأصلي إذا فشل التحويل
-        }
-      }
-      
-      // التحقق من أن التاريخ صالح
-      if (isNaN(date.getTime())) return timeString;
-      
-      // تنسيق التاريخ والوقت بالعربي
-      const options = { 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric',
-        hour: '2-digit', 
-        minute: '2-digit'
-      };
-      
-      return date.toLocaleDateString('ar-SA', options);
+    function formatTime(ms) {
+      const date = new Date(ms);
+      return date.toLocaleDateString('ar-EG', {
+        year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+      });
     }
 
     function loadVisitors() {
-      list.innerHTML = '<div class="loading"><i class="fas fa-circle-notch"></i> جاري تحميل البيانات...</div>';
-      
-      db.collection("visitors").get().then(snapshot => {
-        if (snapshot.empty) {
-          list.innerHTML = `
-            <div class="empty-state">
-              <i class="fas fa-user-slash"></i>
-              <p>لا يوجد زوار حتى الآن</p>
-            </div>`;
-          updateStats([], null);
-          return;
-        }
-        
-        // تجميع بيانات الزوار
-        const visitors = [];
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          visitors.push({
-            id: doc.id,
-            ...data
-          });
-        });
-        
-        // ترتيب البيانات حسب الوقت (الأحدث أولاً)
-        visitors.sort((a, b) => {
-          const timeA = a.time ? new Date(a.time) : new Date(0);
-          const timeB = b.time ? new Date(b.time) : new Date(0);
-          return timeB - timeA;
-        });
-        
-        // عرض البيانات
-        list.innerHTML = '';
-        visitors.forEach((visitor, index) => {
-          const li = document.createElement('li');
-          li.className = 'visitor-card animate__animated animate__fadeIn';
-          li.style.animationDelay = `${index * 0.1}s`;
-          
-          const initials = getInitials(visitor.name || 'زائر');
-          const formattedTime = formatTime(visitor.time);
-          
-          li.innerHTML = `
-            <div class="visitor-header">
-              <div class="visitor-avatar">${initials}</div>
-              <div>
-                <div class="visitor-name">${visitor.name || 'زائر'}</div>
-                <div class="visitor-time"><i class="far fa-clock"></i> ${formattedTime}</div>
-              </div>
+      const visitors = JSON.parse(localStorage.getItem("visitors") || "[]");
+      list.innerHTML = '';
+      if (!visitors.length) {
+        list.innerHTML = `<div class="empty-state"><i class="fas fa-user-slash"></i><p>لا يوجد زوار حتى الآن</p></div>`;
+        updateStats([], null);
+        return;
+      }
+      visitors.sort((a, b) => b.time - a.time);
+      visitors.forEach((visitor, index) => {
+        const li = document.createElement('li');
+        li.className = 'visitor-card';
+        const initials = getInitials(visitor.name || 'زائر');
+        const formattedTime = formatTime(visitor.time);
+        li.innerHTML = `
+          <div class="visitor-header">
+            <div class="visitor-avatar">${initials}</div>
+            <div>
+              <div class="visitor-name">${visitor.name || 'زائر'}</div>
+              <div class="visitor-time"><i class="far fa-clock"></i> ${formattedTime}</div>
             </div>
-            <div class="visitor-details">
-              <div class="visitor-detail">
-                <i class="fas fa-phone"></i>
-                <span>${visitor.phone || 'غير متوفر'}</span>
-              </div>
-              <div class="visitor-detail">
-                <i class="fas fa-envelope"></i>
-                <span>${visitor.email || 'غير متوفر'}</span>
-              </div>
-            </div>
-            <button class="delete-btn" onclick="deleteVisitor('${visitor.id}')">
-              <i class="fas fa-trash-alt"></i>
-            </button>
-          `;
-          list.appendChild(li);
-        });
-        
-        // تحديث الإحصائيات
-        updateStats(visitors, visitors[0]);
-      }).catch(error => {
-        console.error("Error loading visitors:", error);
-        list.innerHTML = `
-          <div class="empty-state">
-            <i class="fas fa-exclamation-triangle"></i>
-            <p>حدث خطأ في تحميل البيانات</p>
-          </div>`;
+          </div>
+          <div class="visitor-details">
+            <div class="visitor-detail"><i class="fas fa-phone"></i><span>${visitor.phone || 'غير متوفر'}</span></div>
+            <div class="visitor-detail"><i class="fas fa-envelope"></i><span>${visitor.email || 'غير متوفر'}</span></div>
+          </div>
+          <button class="delete-btn" onclick="deleteVisitor(${visitor.id})"><i class="fas fa-trash-alt"></i></button>
+        `;
+        list.appendChild(li);
       });
+      updateStats(visitors, visitors[0]);
     }
 
     function updateStats(visitors, lastVisitor) {
-      // إجمالي الزوار
       totalVisitorsElement.textContent = visitors.length;
-      
-      // زوار اليوم
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      
-      const todayVisitors = visitors.filter(visitor => {
-        if (!visitor.time) return false;
-        const visitTime = visitor.time instanceof Date ? visitor.time : new Date(visitor.time);
-        return visitTime >= today;
-      });
-      
+      const today = new Date(); today.setHours(0, 0, 0, 0);
+      const todayVisitors = visitors.filter(v => new Date(v.time) >= today);
       todayVisitorsElement.textContent = todayVisitors.length;
-      
-      // آخر زيارة
       if (lastVisitor && lastVisitor.time) {
-        const now = new Date();
-        const visitTime = lastVisitor.time instanceof Date ? lastVisitor.time : new Date(lastVisitor.time);
-        const diffInMinutes = Math.floor((now - visitTime) / (1000 * 60));
-        
-        if (diffInMinutes < 60) {
-          lastVisitElement.textContent = `${diffInMinutes} دقيقة`;
-        } else if (diffInMinutes < 1440) {
-          lastVisitElement.textContent = `${Math.floor(diffInMinutes / 60)} ساعة`;
-        } else {
-          lastVisitElement.textContent = `${Math.floor(diffInMinutes / 1440)} يوم`;
-        }
+        const diffMin = Math.floor((Date.now() - lastVisitor.time) / 60000);
+        lastVisitElement.textContent = diffMin < 60 ? `${diffMin} دقيقة` : diffMin < 1440 ? `${Math.floor(diffMin / 60)} ساعة` : `${Math.floor(diffMin / 1440)} يوم`;
       } else {
         lastVisitElement.textContent = "-";
       }
     }
 
     function deleteVisitor(id) {
-      if (!confirm("هل أنت متأكد من حذف هذا الزائر؟")) return;
-      
-      const card = document.querySelector(`[onclick="deleteVisitor('${id}')"]`).closest('.visitor-card');
-      card.classList.add('animate__animated', 'animate__fadeOutRight');
-      
-      setTimeout(() => {
-        db.collection("visitors").doc(id).delete().then(() => {
-          loadVisitors();
-        }).catch(error => {
-          console.error("Error removing visitor:", error);
-          card.classList.remove('animate__animated', 'animate__fadeOutRight');
-          alert("حدث خطأ أثناء الحذف، يرجى المحاولة مرة أخرى.");
-        });
-      }, 500);
+      let visitors = JSON.parse(localStorage.getItem("visitors") || "[]");
+      visitors = visitors.filter(v => v.id !== id);
+      localStorage.setItem("visitors", JSON.stringify(visitors));
+      loadVisitors();
     }
-document.body.style.overflow = 'hidden'; // يمنع التمرير أثناء شاشة الدخول
 
-function checkAdminCode() {
-  const input = document.getElementById('adminCodeInput').value.trim();
-  if (input === "admin22") {
-    document.getElementById('loginScreen').style.display = 'none';
-    document.body.style.overflow = ''; // إعادة التمرير
-    loadVisitors(); // تحميل البيانات فقط بعد التحقق
-  } else {
-    document.getElementById('errorMsg').style.display = 'block';
-  }
-}
+    function checkAdminCode() {
+      const input = document.getElementById('adminCodeInput').value.trim();
+      if (input === "admin22") {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.body.style.overflow = '';
+        loadVisitors();
+      } else {
+        document.getElementById('errorMsg').style.display = 'block';
+      }
+    }
 
-// إيقاف تحميل الزوار التلقائي
-// أزل أو علّق هذا السطر في نهاية سكربتك الأصلي:
-// loadVisitors();
-
-    // تحميل البيانات عند فتح الصفحة
-    loadVisitors();
-
-    
+    document.body.style.overflow = 'hidden';
   </script>
 </body>
 </html>
